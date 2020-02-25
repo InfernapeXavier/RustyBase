@@ -1,59 +1,60 @@
-use std::os::unix::raw;
+mod defs;
 
-// ifndef FILE_H
-// define FILE_H
+// mod record{
+//     pub struct Record {
+//         // friend class ComparisonEngine;
+//         // friend class Page;
+//         bits: String,
+//     }
 
-// #include "TwoWayList.h"
-// #include "Record.h"
-// #include "Schema.h"
-// #include "Comparison.h"
-// #include "ComparisonEngine.h"
+//     impl Record {
+//         // getter function
+//         pub fn get_bits(self) -> String {
+//             self.bits
+//         }
+//         // setter function
+//         // pub fn set_bits(self, bits: String) {
 
-// class Record;
+//         // }
+//         // copy fuinction
+//         // pub fn copy_bits(self, bits: String, b_len: i64) {
 
-mod File{
+//         // }
+//         // 
+//         // pub fn consume(from_me: &Record) {
 
-    struct Page {
-        // TwoWayList <Record> *myRecs;
+//         // }
+//         //
+//         // pub fn copy(copy_me: &Record) {
 
-        numRecs: u64,
-        curSizeInBytes: u64,
-    }
+//         // }
+//         // 
+//         // pub fn suck_next_record(my_schema: &Schema, text_file: &File) {
 
-    impl Page {
-        // this takes a page and writes its binary representation to bits
-        // void ToBinary (*bits: char);
-
-        // this takes a page and writes its binary representation to bits
-        // void ToBinary (char *bits);
-
-        // this takes a binary representation of a page and gets the
-        // records from it
-        // void FromBinary (char *bits);
-
-        // the deletes the first record from a page and returns it; returns
-        // a zero if there were no records on the page
-        // int GetFirst (Record *firstOne);
-
-        // this appends the record to the end of a page.  The return value
-        // is a one on success and a aero if there is no more space
-        // note that the record is consumed so it will have no value after
-        // int Append (Record *addMe);
-
-        // empty it out
-        // void EmptyItOut ();
-    }
-
-    struct File {
-        myFilDes: u64,
-        curLength: i64,
-    }
-
-    pub impl File {
-        fn GetLength() -> i64 {
+//         // }
+//         // 
+//         // pub fn project(atts_to_keep: &i64, num_atts_to_keep: i64, num_atts_now: i64) {
+                        
+//         // }
+//         // 
+//         // pub fn merge_records(my_schema: &Schema, text_file: &File) {
             
-        }
-    }
+//         // }
+//         // 
+//         // pub fn print(my_schema: &Schema) {
+            
+//         // }
+//         // 
+
+ 
 
 
+//     }
+
+    
+// }
+
+
+fn main() {
+    println!("Hello", );
 }

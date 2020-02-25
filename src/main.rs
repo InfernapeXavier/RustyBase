@@ -1,4 +1,5 @@
-fn main() {
-  println!("Hello, World!")  ;
-}
+mod defs;
 
+fn main() {
+    println!("Hello, world!");
+}

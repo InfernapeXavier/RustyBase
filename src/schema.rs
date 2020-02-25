@@ -8,7 +8,7 @@ mod schema {
     struct Schema {
         // Attributes of schema
         num_atts: i64,
-        myatts: *mut Attribute,
+        myatts: &mut Attribute,
 
         // physical location of binary file storing the relation
         file_name: String,

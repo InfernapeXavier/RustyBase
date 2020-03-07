@@ -1,9 +1,9 @@
 use std::collections::LinkedList;
 
 pub enum DataType {
-    Int,
-    Double,
-    String,
+    INT,
+    DOUBLE,
+    STRING,
 }
 
 pub enum Target {
@@ -12,7 +12,7 @@ pub enum Target {
     Literal,
 }
 
-pub enum CompOperator{
+pub enum CompOperator {
     LessThan,
     GreaterThan,
     Equals,
@@ -20,7 +20,7 @@ pub enum CompOperator{
 
 // inserts data at the 'at'th position
 pub fn insert(at: usize, data: DataType, two_way_list: &mut LinkedList<DataType>) {
-    let mut rest = two_way_list.split_off(at-1);
+    let mut rest = two_way_list.split_off(at - 1);
     two_way_list.push_back(data);
     two_way_list.append(&mut rest);
 }

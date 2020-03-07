@@ -48,8 +48,8 @@ impl Schema {
     }
 
     #[allow(unused_variables)]
-    fn schema(&mut self, file_name: String, rel_name: String) -> std::io::Result<()> {
-        let foo = File::open(file_name)?; // open file in read mode
+    fn schema(&mut self, file_name: String, rel_name: String) {
+        let foo = File::open(file_name).expect("Unable to open file"); // open file in read mode
         let reader = BufReader::new(foo);
         let mut scans: usize = 1;
         let mut is_schema: bool = false;
@@ -108,7 +108,5 @@ impl Schema {
                 }
             }
         }
-
-        Ok(())
     }
 }

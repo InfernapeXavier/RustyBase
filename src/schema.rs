@@ -1,4 +1,5 @@
-mod defs;
+#[allow(dead_code)]
+use crate::defs;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
@@ -47,14 +48,12 @@ impl Schema {
         &self.my_atts
     }
 
-    #[allow(unused_variables)]
     fn schema(&mut self, file_name: String, rel_name: String) {
         let foo = File::open(file_name).expect("Unable to open file"); // open file in read mode
         let reader = BufReader::new(foo);
         let mut scans: usize = 1;
         let mut is_schema: bool = false;
         let mut is_required: bool = false;
-        let mut rel_file: String;
         self.num_atts = 0;
 
         for line in reader.lines() {
@@ -101,7 +100,7 @@ impl Schema {
                             } else if vec[1] == "String" {
                                 self.my_atts[index].my_type = defs::DataType::STRING;
                             } else {
-                                panic! ("Bad Attribute type for {:#?}", self.my_atts[index].name )
+                                panic!("Bad Attribute type for {:#?}", self.my_atts[index].name)
                             }
                         }
                     }

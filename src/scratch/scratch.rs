@@ -6,7 +6,7 @@ pub enum DataType {
 
 fn main() {
 
-  schema("catalog", "nation");
+  schema("catalog", "region");
 
 }
 

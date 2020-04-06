@@ -1,14 +1,18 @@
-#[allow(dead_code)]
+#![allow(unused_imports)]
 use crate::defs;
+use crate::schema;
+
 struct Record {
     bits: Vec<char>,
 }
 
 impl Record {
-
+    
+    // returns the bit contents of the vector
     fn get_bits(&self) -> &Vec<char> {
-        return &self.bits
+        &self.bits
     }
+    
 
     fn set_bits(&mut self, bits: Vec<char>) {
         self.bits = bits;
@@ -22,7 +26,12 @@ impl Record {
 
     fn consume(mut self, from_me: Record) {
         // move occurs here and the ownership changes
+        // so from_me will be purged
         self.bits = from_me.bits   
+    }
+
+    fn suck_next_record(self) {
+
     }
 
 

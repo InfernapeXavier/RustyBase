@@ -1,4 +1,4 @@
-#[allow(dead_code)]
+#![allow(dead_code)]
 use crate::defs;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
@@ -20,6 +20,7 @@ struct Schema {
 
 // schema functions
 impl Schema {
+    
     fn find(&self, att_name: String) -> i64 {
         for x in 0..self.num_atts {
             let y = x as usize; // can't index using integer
@@ -27,7 +28,7 @@ impl Schema {
                 return x;
             }
         }
-        return -1;
+       -1
     }
 
     fn find_type(&self, att_name: String) -> &defs::DataType {
@@ -37,7 +38,7 @@ impl Schema {
                 return &self.my_atts[y].my_type;
             }
         }
-        return &defs::DataType::INT;
+        &defs::DataType::INT
     }
 
     fn get_num_atts(&self) -> i64 {
@@ -49,8 +50,8 @@ impl Schema {
     }
 
     fn schema(&mut self, file_name: String, rel_name: String) {
-        let foo = File::open(file_name).expect("Unable to open file"); // open file in read mode
-        let reader = BufReader::new(foo);
+        let file_ref = File::open(file_name).expect("Unable to open file"); // open file in read mode
+        let reader = BufReader::new(file_ref);
         let mut scans: usize = 1;
         let mut is_schema: bool = false;
         let mut is_required: bool = false;
@@ -69,9 +70,8 @@ impl Schema {
 
             if line.trim() == "BEGIN" {
                 is_schema = true;
-            } else {
-                if is_schema == true {
-                    if is_required == false {
+            } else if is_schema {
+                    if !is_required {
                         // we haven't found the required schema yet
                         if line.trim() == rel_name {
                             // we have the required schema
@@ -87,12 +87,12 @@ impl Schema {
                                 is_required = false;
                                 is_schema = false;
                             } else {
-                                self.file_name = (&vec[0]).to_string();
+                                self.file_name = (vec[0]).to_string();
                             }
                         } else if vec.len() == 2 {
                             self.num_atts += 1;
                             let index = self.num_atts as usize;
-                            self.my_atts[index].name = (&vec[0]).to_string();
+                            self.my_atts[index].name = (vec[0]).to_string();
                             if vec[1] == "Int" {
                                 self.my_atts[index].my_type = defs::DataType::INT;
                             } else if vec[1] == "Double" {
@@ -105,7 +105,7 @@ impl Schema {
                         }
                     }
                 }
-            }
+            
         }
     }
 }

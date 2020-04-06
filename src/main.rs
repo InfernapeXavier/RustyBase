@@ -6,5 +6,5 @@ mod schema;
 mod record;
 
 fn main() {
-    println!("main.rs Executed");
+    println!("\n\nmain.rs Executed");
 }

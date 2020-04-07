@@ -3,12 +3,12 @@ use crate::defs;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-struct Attribute {
+pub struct Attribute {
     name: String,
     my_type: defs::DataType,
 }
 
-struct Schema {
+pub struct Schema {
     // Attributes of schema
     num_atts: i64,
     my_atts: Vec<Attribute>,
@@ -20,7 +20,6 @@ struct Schema {
 
 // schema functions
 impl Schema {
-    
     fn find(&self, att_name: String) -> i64 {
         for x in 0..self.num_atts {
             let y = x as usize; // can't index using integer
@@ -28,7 +27,7 @@ impl Schema {
                 return x;
             }
         }
-       -1
+        -1
     }
 
     fn find_type(&self, att_name: String) -> &defs::DataType {
@@ -41,15 +40,15 @@ impl Schema {
         &defs::DataType::INT
     }
 
-    fn get_num_atts(&self) -> i64 {
+    pub fn get_num_atts(&self) -> i64 {
         self.num_atts
     }
 
-    fn get_atts(&self) -> &Vec<Attribute> {
+    pub fn get_atts(&self) -> &Vec<Attribute> {
         &self.my_atts
     }
 
-    fn schema(&mut self, file_name: String, rel_name: String) {
+    pub fn new(&mut self, file_name: &str, rel_name: &str) -> &Schema {
         let file_ref = File::open(file_name).expect("Unable to open file"); // open file in read mode
         let reader = BufReader::new(file_ref);
         let mut scans: usize = 1;
@@ -71,41 +70,42 @@ impl Schema {
             if line.trim() == "BEGIN" {
                 is_schema = true;
             } else if is_schema {
-                    if !is_required {
-                        // we haven't found the required schema yet
-                        if line.trim() == rel_name {
-                            // we have the required schema
-                            is_required = true;
-                        } else {
-                            is_schema = false;
-                        }
+                if !is_required {
+                    // we haven't found the required schema yet
+                    if line.trim() == rel_name {
+                        // we have the required schema
+                        is_required = true;
                     } else {
-                        let split = line.split_whitespace();
-                        let vec: Vec<&str> = split.collect();
-                        if vec.len() == 1 {
-                            if vec[0] == "END" {
-                                is_required = false;
-                                is_schema = false;
-                            } else {
-                                self.file_name = (vec[0]).to_string();
-                            }
-                        } else if vec.len() == 2 {
-                            self.num_atts += 1;
-                            let index = self.num_atts as usize;
-                            self.my_atts[index].name = (vec[0]).to_string();
-                            if vec[1] == "Int" {
-                                self.my_atts[index].my_type = defs::DataType::INT;
-                            } else if vec[1] == "Double" {
-                                self.my_atts[index].my_type = defs::DataType::DOUBLE;
-                            } else if vec[1] == "String" {
-                                self.my_atts[index].my_type = defs::DataType::STRING;
-                            } else {
-                                panic!("Bad Attribute type for {:#?}", self.my_atts[index].name)
-                            }
+                        is_schema = false;
+                    }
+                } else {
+                    let split = line.split_whitespace();
+                    let vec: Vec<&str> = split.collect();
+                    if vec.len() == 1 {
+                        if vec[0] == "END" {
+                            is_required = false;
+                            is_schema = false;
+                        } else {
+                            self.file_name = (vec[0]).to_string();
+                        }
+                    } else if vec.len() == 2 {
+                        self.num_atts += 1;
+                        let index = self.num_atts as usize;
+                        self.my_atts[index].name = (vec[0]).to_string();
+                        if vec[1] == "Int" {
+                            self.my_atts[index].my_type = defs::DataType::INT;
+                        } else if vec[1] == "Double" {
+                            self.my_atts[index].my_type = defs::DataType::DOUBLE;
+                        } else if vec[1] == "String" {
+                            self.my_atts[index].my_type = defs::DataType::STRING;
+                        } else {
+                            panic!("Bad Attribute type for {:#?}", self.my_atts[index].name)
                         }
                     }
                 }
-            
+            }
         }
+
+        self
     }
 }

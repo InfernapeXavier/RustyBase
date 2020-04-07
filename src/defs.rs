@@ -18,6 +18,10 @@ pub enum CompOperator {
     Equals,
 }
 
+pub const MAX_ANDS: usize = 20;
+pub const MAX_ORS: usize = 20;
+pub const PAGE_SIZE: usize = 131_072;
+
 // inserts data at the 'at'th position
 pub fn insert(at: usize, data: DataType, two_way_list: &mut LinkedList<DataType>) {
     let mut rest = two_way_list.split_off(at - 1);

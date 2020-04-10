@@ -1,21 +1,25 @@
-#![allow(dead_code)]
-use crate::defs;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
+#![allow(unused_variables)]
+#[derive(Debug)]
 
-pub struct Attribute {
-    name: String,
-    my_type: defs::DataType,
+pub enum DataType {
+    INT,
+    DOUBLE,
+    STRING,
 }
 
-impl Attribute {
-    pub fn new() -> Attribute {
-        Attribute {
-            name: String::from("name"),
-            my_type: DataType::INT,
-        }
-    }
+    use std::fs::File;
+    use std::io::{BufRead, BufReader};
+
+pub const PAGE_SIZE: usize = 131_072;
+
+fn main() {
+    let blank_schema = Schema::new();
+    let my_schema = blank_schema.build("catalog", "nation");
+
+    suck_next_record(&my_schema, &my_schema.file_name);
+
 }
+#[derive(Debug)]
 
 pub struct Schema {
     // Attributes of schema
@@ -26,36 +30,50 @@ pub struct Schema {
     file_name: String,
     // friend class Record;
 }
+#[derive(Debug)]
 
-// schema functions
+pub struct Attribute {
+    name: String,
+    my_type: DataType,
+}
+
+impl Attribute {
+    pub fn new() -> Attribute {
+        Attribute{
+            name: String::from("name"),
+            my_type: DataType::INT
+        }
+
+    }
+}
+
+fn suck_next_record(my_schema: &Schema, file_name: &str) {
+
+    
+    let space: Vec<char> = Vec::with_capacity(PAGE_SIZE);
+    let rec_space: Vec<char> = Vec::with_capacity(PAGE_SIZE);
+
+    // clearing out the current record
+    // self.bits = Vec::new();
+
+    let n = my_schema.get_num_atts();
+    let atts = my_schema.get_atts();
+
+    let file = File::open(file_name).expect("Unable to open file"); // open file in read mode
+    let reader = BufReader::new(file);
+
+    for line in reader.lines() {
+        let line = line.expect("Unable to read line");
+        let mut vec: Vec<&str> = line.split("|").collect();
+        vec.pop();
+
+        print!("{:#?}", vec)
+        
+    }
+}
+
+
 impl Schema {
-    pub fn new() -> Schema {
-        Schema {
-            num_atts: 0,
-            my_atts: Vec::new(),
-            file_name: String::from(""),
-        }
-    }
-
-    fn find(&self, att_name: String) -> i64 {
-        for x in 0..self.num_atts {
-            let y = x as usize; // can't index using integer
-            if att_name == self.my_atts[y].name {
-                return x;
-            }
-        }
-        -1
-    }
-
-    fn find_type(&self, att_name: String) -> &defs::DataType {
-        for x in 0..self.num_atts {
-            let y = x as usize; // can't index using integer
-            if att_name == self.my_atts[y].name {
-                return &self.my_atts[y].my_type;
-            }
-        }
-        &defs::DataType::INT
-    }
 
     pub fn get_num_atts(&self) -> i64 {
         self.num_atts
@@ -65,7 +83,15 @@ impl Schema {
         &self.my_atts
     }
 
-    pub fn build(&mut self, file_name: &str, rel_name: &str) -> &Schema {
+    pub fn new() -> Schema {
+        Schema {
+            num_atts: 0,
+            my_atts: Vec::new(),
+            file_name: String::from("")
+        }
+    }
+
+    pub fn build(mut self, file_name: &str, rel_name: &str) -> Schema {
         let file_ref = File::open(file_name).expect("Unable to open file"); // open file in read mode
         let reader = BufReader::new(file_ref);
         let mut scans: usize = 1;
@@ -86,45 +112,47 @@ impl Schema {
 
             if line.trim() == "BEGIN" {
                 is_schema = true;
+
             } else if is_schema {
-                // we found the start of a valid schema
                 if !is_required {
                     // we haven't found the required schema yet
                     if line.trim() == rel_name {
                         // we have the required schema
                         is_required = true;
+
                     } else {
                         is_schema = false;
                     }
                 } else {
-                    let vec: Vec<&str> = line.split_whitespace().collect(); //splits the line at whitespace and collects the parts in a vector
+                    let split = line.split_whitespace();
+                    let vec: Vec<&str> = split.collect();
+
                     if vec.len() == 1 {
                         if vec[0] == "END" {
-                            // if at the end, set flags accordingly to stop
-                            // TODO: Break if required schema is found
                             is_required = false;
                             is_schema = false;
                         } else {
-                            // if the word isn't end then it's the name of record file
                             self.file_name = (vec[0]).to_string();
                         }
                     } else if vec.len() == 2 {
-                        self.num_atts += 1; //increase count
+                        let index = self.num_atts as usize;
+                        self.num_atts += 1;
 
-                        // create a local instance of attribute
                         let mut my_attribute = Attribute::new();
                         my_attribute.name = (vec[0]).to_string();
+
+                        // self.my_atts[index].name = (vec[0]).to_string();
+
                         if vec[1] == "Int" {
-                            my_attribute.my_type = defs::DataType::INT;
+                            my_attribute.my_type = DataType::INT;
                         } else if vec[1] == "Double" {
-                            my_attribute.my_type = defs::DataType::DOUBLE;
+                            my_attribute.my_type = DataType::DOUBLE;
                         } else if vec[1] == "String" {
-                            my_attribute.my_type = defs::DataType::STRING;
+                            my_attribute.my_type = DataType::STRING;
                         } else {
                             panic!("Bad Attribute type for {:#?}", self.my_atts[index].name)
                         }
-                        
-                        // push the local attribute to my_atts which is a vector of attributes
+
                         self.my_atts.push(my_attribute)
 
                     }

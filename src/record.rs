@@ -3,7 +3,6 @@
 use crate::defs;
 use crate::schema;
 
-
 struct Record {
     bits: Vec<char>,
 }
@@ -31,10 +30,9 @@ impl Record {
     }
 
     fn suck_next_record(mut self, my_schema: schema::Schema, file_name: &str) {
-
         use std::fs::File;
         use std::io::{BufRead, BufReader};
-        
+
         let space: Vec<char> = Vec::with_capacity(defs::PAGE_SIZE);
         let rec_space: Vec<char> = Vec::with_capacity(defs::PAGE_SIZE);
 
@@ -48,7 +46,9 @@ impl Record {
         let reader = BufReader::new(file);
 
         for line in reader.lines() {
-
+            let line = line.expect("Unable to read line");
+            let mut vec: Vec<&str> = line.split("|").collect();
+            vec.pop();
         }
     }
 }

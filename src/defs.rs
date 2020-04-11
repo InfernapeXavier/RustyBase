@@ -1,5 +1,6 @@
 use std::collections::LinkedList;
 
+#[derive(Debug)]
 pub enum DataType {
     INT,
     DOUBLE,

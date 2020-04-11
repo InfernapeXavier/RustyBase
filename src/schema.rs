@@ -3,16 +3,16 @@ use crate::defs;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
+#[derive(Debug)]
 pub struct Attribute {
     name: String,
     my_type: defs::DataType,
 }
-
 impl Attribute {
     pub fn new() -> Attribute {
         Attribute {
             name: String::from("name"),
-            my_type: DataType::INT,
+            my_type: defs::DataType::INT,
         }
     }
 }
@@ -121,7 +121,7 @@ impl Schema {
                         } else if vec[1] == "String" {
                             my_attribute.my_type = defs::DataType::STRING;
                         } else {
-                            panic!("Bad Attribute type for {:#?}", self.my_atts[index].name)
+                            panic!("Bad Attribute type for {:#?}", my_attribute.my_type)
                         }
                         
                         // push the local attribute to my_atts which is a vector of attributes

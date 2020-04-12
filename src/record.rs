@@ -29,7 +29,7 @@ impl Record {
         self.bits = from_me.bits
     }
 
-    fn suck_next_record(mut self, my_schema: schema::Schema, file_name: &str) {
+    fn suck_next_record(mut self, my_schema: schema::Schema, file_name: &str, offset: usize) {
         use std::fs::File;
         use std::io::{BufRead, BufReader};
 

@@ -123,10 +123,9 @@ impl Schema {
                         } else {
                             panic!("Bad Attribute type for {:#?}", my_attribute.my_type)
                         }
-                        
+
                         // push the local attribute to my_atts which is a vector of attributes
                         self.my_atts.push(my_attribute)
-
                     }
                 }
             }

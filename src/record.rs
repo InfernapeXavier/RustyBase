@@ -45,10 +45,14 @@ impl Record {
         let file = File::open(file_name).expect("Unable to open file"); // open file in read mode
         let reader = BufReader::new(file);
 
-        for line in reader.lines() {
-            let line = line.expect("Unable to read line");
-            let mut vec: Vec<&str> = line.split("|").collect();
-            vec.pop();
-        }
+        let line = reader.lines().skip(1).next();
+        let line = match line {
+        None => String::from("No Line!"),
+        Some(x) =>  x.expect("Unable to read line")
+    };
+
+    let mut vec: Vec<&str> = line.split("|").collect();
+    vec.pop();
+    println!("{:#?}", vec);
     }
 }

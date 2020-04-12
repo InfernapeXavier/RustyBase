@@ -17,19 +17,22 @@ fn main() {
     //     break;
     // }
     
-    let line = reader.lines().skip(1).next();
-    let line = match line {
-        None => String::from("No Line!"),
-        Some(x) =>  x.expect("Unable to read line")
-    };
+    let mut line = reader.lines();
+    for i in 0..5 {
+        let mut newline = line.next();
+        let newline = match newline {
+            None => String::from("No Line!"),
+            Some(x) =>  x.expect("Unable to read line")
+        };
 
-    let mut vec: Vec<&str> = line.split("|").collect();
-    vec.pop();
-    println!("{:#?}", vec);
+        let mut vec: Vec<&str> = newline.split("|").collect();
+        vec.pop();
+        if vec.is_empty() {
+            println!("EOF", );
+        } else {
+            println!("{:#?}", vec);
+        }
+    }
 
-    // println!("{:#?}", match line {
-    //     None => String::from("No Line!"),
-    //     Some(x) =>  x.expect("Unable to read line")
-    // }
-    // )
+
 }

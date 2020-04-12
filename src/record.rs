@@ -4,7 +4,7 @@ use crate::defs;
 use crate::schema;
 
 struct Record {
-    bits: Vec<char>,
+    bits: String,
 }
 
 impl Record {

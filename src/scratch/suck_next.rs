@@ -7,6 +7,10 @@ pub enum DataType {
     STRING,
 }
 
+struct Record {
+    bits: Vec<char>,
+}
+
     use std::fs::File;
     use std::io::{BufRead, BufReader};
 
@@ -66,8 +70,11 @@ fn suck_next_record(my_schema: &Schema, file_name: &str) {
         let line = line.expect("Unable to read line");
         let mut vec: Vec<&str> = line.split("|").collect();
         vec.pop();
-        
+        println!("{:#?}", vec)
+
     }
+
+
 }
 
 
@@ -152,7 +159,6 @@ impl Schema {
                         }
 
                         self.my_atts.push(my_attribute)
-
                     }
                 }
             }

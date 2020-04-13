@@ -30,7 +30,11 @@ fn main() {
         if vec.is_empty() {
             println!("EOF", );
         } else {
-            println!("{:#?}", vec);
+            let mut v = Vec::new();
+            for x in vec {
+                v.push(x.to_string());
+            }
+            println!("{:#?}", v);
         }
     }
 

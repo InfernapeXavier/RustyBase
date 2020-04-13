@@ -3,27 +3,27 @@
 use crate::defs;
 use crate::schema;
 
-struct Record<'a> {
-    bits: Vec<&'a str>,
+struct Record {
+    bits: Vec<String>,
 }
 
-impl<'a> Record<'a> {
+impl Record {
     // returns the bit contents of the vector
-    fn get_bits(&self) -> &Vec<&str> {
+    fn get_bits(&self) -> &Vec<String> {
         &self.bits
     }
 
-    fn set_bits(&mut self, bits: Vec<&'a str>) {
+    fn set_bits(&mut self, bits: Vec<String>) {
         self.bits = bits;
     }
 
-    fn copy_bits(&mut self, bits: Vec<&'a str>, b_len: usize) {
-        let mut temp: Vec<&str> = Vec::with_capacity(b_len);
-        temp.copy_from_slice(&bits);
-        self.bits = temp;
+    fn copy_bits(&mut self, bits: Vec<String>, b_len: usize) {
+        let temp: Vec<&str> = Vec::with_capacity(b_len);
+        // temp.copy_from_slice(&bits);
+        self.bits = bits;
     }
 
-    fn consume(mut self, from_me: Record<'a>) {
+    fn consume(mut self, from_me: Record) {
         // move occurs here and the ownership changes
         // so from_me will be purged
         self.bits = from_me.bits
@@ -61,7 +61,7 @@ impl<'a> Record<'a> {
         } else {
             self.bits = Vec::new();
             for x in vec {
-                // self.bits.push(x);
+                self.bits.push(x.to_string());
             }
             1
         }

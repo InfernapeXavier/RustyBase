@@ -1,8 +1,7 @@
-#[allow(dead_code)]
+#![allow(dead_code)]
+#![allow(unused_variables)]
 mod defs;
-#[allow(dead_code)]
 mod record;
-#[allow(dead_code)]
 mod schema;
 
 fn main() {

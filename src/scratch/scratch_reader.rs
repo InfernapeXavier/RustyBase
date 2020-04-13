@@ -9,7 +9,7 @@ fn main() {
     let reader = BufReader::new(file);
 
 
-    // for line in reader.lines().skip(1){
+    // for line in reader.lines().nth(3){
     //     let line = line.expect("Unable to read line");
     //     let mut vec: Vec<&str> = line.split("|").collect();
     //     vec.pop();
@@ -18,8 +18,8 @@ fn main() {
     // }
     
     let mut line = reader.lines();
-    for i in 0..5 {
-        let mut newline = line.next();
+    for _ in 0..5 {
+        let newline = line.next();
         let newline = match newline {
             None => String::from("No Line!"),
             Some(x) =>  x.expect("Unable to read line")

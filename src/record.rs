@@ -54,7 +54,7 @@ impl Record {
             Some(x) => x.expect("Unable to read line"),
         };
 
-        let mut vec: Vec<&str> = newline.split("|").collect();
+        let mut vec: Vec<&str> = newline.split('|').collect();
         vec.pop();
         if vec.is_empty() {
             0

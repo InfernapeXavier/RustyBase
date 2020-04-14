@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use crate::defs;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
@@ -65,8 +64,8 @@ impl Schema {
         &self.my_atts
     }
 
-    pub fn build(&mut self, file_name: &str, rel_name: &str) -> &Schema {
-        let file_ref = File::open(file_name).expect("Unable to open file"); // open file in read mode
+    pub fn build(mut self, file_name: &std::path::Path, rel_name: &str) -> Schema {
+        let file_ref = File::open(file_name).expect("Unable to open Schema File"); // open file in read mode
         let reader = BufReader::new(file_ref);
         let mut scans: usize = 1;
         let mut is_schema: bool = false;

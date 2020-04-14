@@ -20,6 +20,8 @@ fn main() {
     let mut line = reader.lines();
     for _ in 0..5 {
         let newline = line.next();
+        println!("{:#?}", newline);
+
         let newline = match newline {
             None => String::from("No Line!"),
             Some(x) =>  x.expect("Unable to read line")

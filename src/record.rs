@@ -1,13 +1,24 @@
-#![allow(unused_imports)]
-#![allow(unused_variables)]
 use crate::defs;
 use crate::schema;
+use std::fs::File;
+use std::io::{BufRead, BufReader};
+use std::path::Path;
 
-struct Record {
+pub struct Record {
     bits: Vec<String>,
+    reader: std::io::Lines<std::io::BufReader<std::fs::File>>,
 }
 
 impl Record {
+    pub fn new(file_name: &std::path::Path) -> Record {
+        let file = File::open(file_name).expect("Unable to open Data File"); // open file in read mode
+        let reader = BufReader::new(file);
+        let line = reader.lines();
+        Record {
+            bits: Vec::new(),
+            reader: line,
+        }
+    }
     // returns the bit contents of the vector
     fn get_bits(&self) -> &Vec<String> {
         &self.bits
@@ -29,26 +40,15 @@ impl Record {
         self.bits = from_me.bits
     }
 
-    fn suck_next_record(
-        mut self,
-        my_schema: schema::Schema,
-        file_name: &str,
-        offset: usize,
-    ) -> usize {
-        use std::fs::File;
-        use std::io::{BufRead, BufReader};
+    pub fn print(&self, my_schema: &schema::Schema) {
+        let n = my_schema.get_num_atts();
+        println!("{:#?}", self.bits);
+    }
 
-        let space: Vec<&str> = Vec::with_capacity(defs::PAGE_SIZE);
-        let rec_space: Vec<&str> = Vec::with_capacity(defs::PAGE_SIZE);
-
-        // clearing out the current record
-        self.bits = Vec::new();
-
-        let file = File::open(file_name).expect("Unable to open file"); // open file in read mode
-        let reader = BufReader::new(file);
-
-        let mut line = reader.lines();
-        let newline = line.next();
+    pub fn suck_next_record(&mut self, my_schema: &schema::Schema) -> usize {
+        // // clearing out the current record
+        // self.bits = Vec::new();
+        let newline = self.reader.next();
         let newline = match newline {
             None => String::from("No Line!"),
             Some(x) => x.expect("Unable to read line"),

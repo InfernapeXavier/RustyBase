@@ -6,8 +6,8 @@ mod defs;
 mod record;
 mod schema;
 
-use std::path::Path;
 use std::env;
+use std::path::Path;
 
 fn main() {
     println!("\n\nmain.rs Executing.........\n\n\n");
@@ -16,7 +16,7 @@ fn main() {
 
     let catalog = Path::new("src/scratch/catalog");
     my_schema = my_schema.build(catalog, "nation");
-    
+
     let record_file = Path::new("src/scratch/nation.tbl");
 
     let mut my_record = record::Record::new(record_file);

@@ -17,9 +17,9 @@ fn main() {
     let catalog = Path::new("src/scratch/catalog");
     my_schema = my_schema.build(catalog, "nation");
     
-    let path = Path::new("src/scratch/nation.tbl");
+    let record_file = Path::new("src/scratch/nation.tbl");
 
-    let mut my_record = record::Record::new(path);
+    let mut my_record = record::Record::new(record_file);
     my_record.suck_next_record(&my_schema);
     my_record.print(&my_schema);
     my_record.suck_next_record(&my_schema);

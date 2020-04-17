@@ -1,6 +1,8 @@
 use std::collections::LinkedList;
 
-#[derive(Debug)]
+#[derive(Debug)] //lets us use the inbuilt formatter for printing
+
+// Defining all the Enums we'll be requiring
 pub enum DataType {
     INT,
     DOUBLE,
@@ -19,10 +21,12 @@ pub enum CompOperator {
     Equals,
 }
 
+// Defining all the Constants/Globals we'll be requiring
 pub const MAX_ANDS: usize = 20;
 pub const MAX_ORS: usize = 20;
 pub const PAGE_SIZE: usize = 131_072;
 
+// Defining custom methods for manipulation of Linked Lists
 // inserts data at the 'at'th position
 pub fn insert(at: usize, data: DataType, two_way_list: &mut LinkedList<DataType>) {
     let mut rest = two_way_list.split_off(at - 1);

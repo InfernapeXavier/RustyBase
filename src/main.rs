@@ -1,13 +1,16 @@
+// Inner Attributes to suppress Cargo Warnings
 #![allow(dead_code)]
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 
+// STD Imports
+use std::path::Path;
+
+// Custom imports
 mod defs;
+mod file;
 mod record;
 mod schema;
-
-use std::env;
-use std::path::Path;
 
 fn main() {
     println!("\n\nmain.rs Executing.........\n\n\n");

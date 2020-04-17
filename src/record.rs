@@ -1,8 +1,9 @@
-use crate::defs;
-use crate::schema;
+// STD Imports
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::path::Path;
+
+// Custom Import
+use crate::schema;
 
 pub struct Record {
     bits: Vec<String>,

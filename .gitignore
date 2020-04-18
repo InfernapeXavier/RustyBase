@@ -16,4 +16,5 @@ Cargo.lock
 .idea
 
 # Scratch Executabless
-./Scratch/*.exe
+src/scratch/*.exe
+src/scratch/*.pdb

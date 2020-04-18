@@ -1,20 +1,23 @@
 use std::collections::LinkedList;
 
-#[derive(Debug)] //lets us use the inbuilt formatter for printing
-
-// Defining all the Enums we'll be requiring
+// derive debug lets us use the inbuilt formatter for printing
+// derive PartialEq implements a default equality operator
+// these can't be defined as outer because of the functions in this file
+#[derive(Debug, PartialEq)]
 pub enum DataType {
     INT,
     DOUBLE,
     STRING,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum Target {
     Left,
     Right,
     Literal,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum CompOperator {
     LessThan,
     GreaterThan,

@@ -115,6 +115,7 @@ impl CNF {
         }
     }
 
-    fn print() {}
+    fn print(self) {}
+
     fn grow_from_parse_tree() {}
 }

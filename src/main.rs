@@ -14,9 +14,9 @@ mod record;
 mod schema;
 
 fn main() {
-    println!("\n\nmain.rs Executing.........\n\n\n");
+    println!("\n\nmain.rs Executing.........\n\n");
 
-    // Schema+Record Test
+    // // Schema+Record Test
     // let mut my_schema = schema::Schema::new();
 
     // let catalog = Path::new("src/scratch/catalog");
@@ -30,15 +30,14 @@ fn main() {
     // my_record.suck_next_record(&my_schema);
     // my_record.print(&my_schema);
 
-    // Comparison Test
-    // let comparison = comparison::Comparison::new(
-    //     defs::Target::Left,
-    //     defs::Target::Right,
-    //     4,
-    //     5,
-    //     defs::DataType::INT,
-    //     defs::CompOperator::LessThan,
-    // );
-
-    // comparison.print();
+    // // Comparison Test
+    let comparison = comparison::Comparison::new(
+        defs::Target::Left,
+        defs::Target::Right,
+        4,
+        5,
+        defs::DataType::INT,
+        defs::CompOperator::LessThan,
+    );
+    comparison.print();
 }

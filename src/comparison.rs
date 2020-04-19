@@ -1,5 +1,5 @@
 use crate::defs;
-
+#[derive(Clone, Copy)]
 pub struct Comparison {
     operand_one: defs::Target,
     operand_two: defs::Target,
@@ -100,14 +100,14 @@ impl OrderMaker {
 }
 
 pub struct CNF {
-    or_list: Comparison,
+    or_list: Vec<Vec<Comparison>>,
 
     or_lens: Vec<usize>,
     num_ands: usize,
 }
 
 impl CNF {
-    pub fn new(or_list: Comparison, or_lens: Vec<usize>, num_ands: usize) -> CNF {
+    pub fn new(or_list: Vec<Vec<Comparison>>, or_lens: Vec<usize>, num_ands: usize) -> CNF {
         CNF {
             or_list: or_list,
             or_lens: or_lens,
@@ -115,7 +115,25 @@ impl CNF {
         }
     }
 
-    fn print(self) {}
+    fn print(&self) {
+        for x in 0..self.num_ands {
+            print!("( ");
+            for y in 0..self.or_lens[x] {
+                self.or_list[x][y].print();
+                if y < self.or_lens[x] - 1 {
+                    print!(" OR ");
+                }
+            }
+            print!(") ");
+            if x < self.num_ands - 1 {
+                println!(" AND");
+            }
+        }
+    }
 
     fn grow_from_parse_tree() {}
 }
+
+// fn add_lit_to_file(num_fields_in_lit: usize, file_name: String, value: char, my_type: defs:DataType) {
+
+// }

@@ -2,22 +2,26 @@ use std::collections::LinkedList;
 
 // derive debug lets us use the inbuilt formatter for printing
 // derive PartialEq implements a default equality operator
+// derive clone and copy implement a Copy method
 // these can't be defined as outer because of the functions in this file
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
+
 pub enum DataType {
     INT,
     DOUBLE,
     STRING,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
+
 pub enum Target {
     Left,
     Right,
     Literal,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
+
 pub enum CompOperator {
     LessThan,
     GreaterThan,
@@ -30,13 +34,13 @@ pub const MAX_ORS: usize = 20;
 pub const PAGE_SIZE: usize = 131_072;
 
 // Defining custom methods for manipulation of Linked Lists
-// inserts data at the 'at'th position
+// inserts data at the 'at' position
 pub fn insert(at: usize, data: DataType, two_way_list: &mut LinkedList<DataType>) {
     let mut rest = two_way_list.split_off(at - 1);
     two_way_list.push_back(data);
     two_way_list.append(&mut rest);
 }
-// removes data at the 'at'th position
+// removes data at the 'at' position
 pub fn remove(at: usize, two_way_list: &mut LinkedList<DataType>) {
     let mut rest = two_way_list.split_off(at);
     two_way_list.pop_back();

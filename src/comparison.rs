@@ -107,11 +107,11 @@ pub struct CNF {
 }
 
 impl CNF {
-    pub fn new(or_list: Vec<Vec<Comparison>>, or_lens: Vec<usize>, num_ands: usize) -> CNF {
+    pub fn new() -> CNF {
         CNF {
-            or_list: or_list,
-            or_lens: or_lens,
-            num_ands: num_ands,
+            or_list: Vec::new(),
+            or_lens: Vec::new(),
+            num_ands: 0,
         }
     }
 
@@ -131,7 +131,9 @@ impl CNF {
         }
     }
 
-    fn grow_from_parse_tree() {}
+    pub fn grow_from_parse_tree(self) {
+        println!("Hello");
+    }
 }
 
 // fn add_lit_to_file(num_fields_in_lit: usize, file_name: String, value: char, my_type: defs:DataType) {

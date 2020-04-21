@@ -23,12 +23,12 @@ impl Comparison {
         op: defs::CompOperator,
     ) -> Comparison {
         Comparison {
-            operand_one: operand_one,
-            operand_two: operand_two,
-            which_att_one: which_att_one,
-            which_att_two: which_att_two,
-            att_type: att_type,
-            op: op,
+            operand_one,
+            operand_two,
+            which_att_one,
+            which_att_two,
+            att_type,
+            op,
         }
     }
 
@@ -92,9 +92,9 @@ pub struct OrderMaker {
 impl OrderMaker {
     pub fn new(num_atts: usize, which_atts: Vec<usize>, which_types: defs::DataType) -> OrderMaker {
         OrderMaker {
-            num_atts: num_atts,
-            which_atts: which_atts,
-            which_types: which_types,
+            num_atts,
+            which_atts,
+            which_types,
         }
     }
 }
@@ -132,7 +132,7 @@ impl CNF {
     }
 
     pub fn grow_from_parse_tree(self) {
-        println!("Hello");
+        println!("Comparison Tree");
     }
 }
 

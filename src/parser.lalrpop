@@ -1,10 +1,55 @@
 use std::str::FromStr;
-
+use crate::parser;
 grammar;
 
-pub Term: i32 = {
-    <n:Num> => n,
-    "(" <t:Term> ")" => t,
+match {
+    "<",
+    "",
+    ">",
+    "(",
+    ")",
+    "AND",
+    "OR",
+    r"[0-9]+", // Int
+    r"[0-9]+(\.[0-9]*)*", // Float
+    r"[A-Za-z][A-Za-z0-9_-]*", // String
+
+
+    // Skip whitespace and comments
+    r"\s*" => { },
+    r"//[^\n\r]*[\n\r]*" => { }, // `// comment`
+    r"/\*([^\*]*\*+[^\*/])*([^\*]*\*+|[^\*])*\*/" => { }, // `/* comment */`
+    // Handle "'" in Strings
+}
+
+pub Expr: f32 = {
+    <l:Expr> "+" <r:Factor> => l + r,
+    <l:Expr> "-" <r:Factor> => l - r,
+    Factor,
 };
 
-Num: i32 = <s:r"[0-9]+"> => i32::from_str(s).unwrap();
+Factor: f32 = {
+    <l:Factor> "*" <r:Term> => l * r,
+    <l:Factor> "/" <r:Term> => l / r,
+    Term,
+};
+
+Literal: parser::Operand = {
+    INT => {
+        Operand {
+            
+        }
+    }
+};
+
+FLOAT: f32 = {
+    r"[0-9]+(\.[0-9]*)*" => f32::from_str(<>).unwrap(),
+};
+
+INT: i32 = {
+    r"[0-9]+" => i32::from_str(<>).unwrap(),
+}
+
+STRING: String = {
+    r"[A-Za-z][A-Za-z0-9_-]*" => (<>)
+}

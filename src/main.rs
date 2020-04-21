@@ -12,26 +12,30 @@ use std::path::Path;
 mod comparison;
 mod defs;
 mod file;
+mod parser;
 mod record;
 mod schema;
 
+// LALRPOP Parser to parse inputs
+lalrpop_mod!(pub parser);
+
 fn main() {
-    print!("\n\nEnter in your CNF: ");
-    io::stdout().flush().unwrap();
+    println!("\n\nExecuting Main.........");
+    // print!("\n\nEnter in your CNF: ");
+    // io::stdout().flush().unwrap();
+    // let mut input = String::new();
+    // io::stdin()
+    //     .read_line(&mut input)
+    //     .expect("Can't parse your CNF");
+    // input = input.trim().to_string();
+    // println!("\n\nYou entered: {}", input);
 
-    let mut input = String::new();
-    std::io::stdin()
-        .read_line(&mut input)
-        .expect("Can't parse your CNF");
-
-    println!("{}", input);
-
-    // Creating Schema
-    let mut my_schema = schema::Schema::new();
-    let catalog = Path::new("src/scratch/catalog");
-    my_schema = my_schema.build(catalog, "nation");
-    let my_comparison = comparison::CNF::new();
-    my_comparison.grow_from_parse_tree();
+    // // Creating Schema
+    // let mut my_schema = schema::Schema::new();
+    // let catalog = Path::new("src/scratch/catalog");
+    // my_schema = my_schema.build(catalog, "nation");
+    // let my_comparison = comparison::CNF::new();
+    // my_comparison.grow_from_parse_tree();
 }
 
 #[test]
@@ -60,4 +64,23 @@ fn test1() {
         defs::CompOperator::LessThan,
     );
     comparison.print();
+}
+
+#[test]
+fn test2() {
+    print!("\n\nEnter in your CNF: ");
+    io::stdout().flush().unwrap();
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Can't parse your CNF");
+    input = input.trim().to_string();
+    println!("\n\nYou entered: {}", input);
+
+    // Creating Schema
+    let mut my_schema = schema::Schema::new();
+    let catalog = Path::new("src/scratch/catalog");
+    my_schema = my_schema.build(catalog, "nation");
+    let my_comparison = comparison::CNF::new();
+    my_comparison.grow_from_parse_tree();
 }

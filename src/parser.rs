@@ -18,3 +18,12 @@ pub struct AndList {
     lift: Box<OrList>,
     right_and: Box<AndList>,
 }
+
+pub const LESS_THAN: usize = 1;
+pub const GREATER_THAN: usize = 2;
+pub const EQUALS: usize = 3;
+
+pub const DOUBLE: usize = 1;
+pub const INT: usize = 2;
+pub const STRING: usize = 3;
+pub const NAME: usize = 4;

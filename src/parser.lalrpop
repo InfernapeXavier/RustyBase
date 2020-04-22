@@ -1,5 +1,6 @@
 use std::str::FromStr;
-use crate::parser::{Operand, ComparisonOp, OrList, AndList};
+use crate::parsedefs;
+use crate::parsedefs::{Operand, ComparisonOp, OrList, AndList};
 grammar;
 
 match {
@@ -12,7 +13,8 @@ match {
     "OR",
     r"[0-9]+", // Int
     r"[0-9]+\.[0-9]*", // Float
-    r"[A-Za-z][A-Za-z0-9_-]*", // String
+    r"[A-Za-z][A-Za-z0-9_-]*", // Name
+    r"'[^\n]*'", // String
 
 
     // Skip whitespace and comments
@@ -24,17 +26,17 @@ match {
 
 pub ParseTree: AndList = {
     "(" <o:OrList> ")" AND <a:ParseTree> => {
-        AndList::new(o,a)
+        AndList::new(Box::new(o), Some(Box::new(a)))
     },
 
-    "(" OrList ")" => {
-        AndList::new(<>, None)
+    "(" <o:OrList> ")" => {
+        AndList::new(Box::new(o), None)
     }
 };
 
 OrList: OrList = {
     <l:Condition> OR <r:OrList> => {
-        OrList::new(l,r)
+        OrList::new(l,Some(Box::new(r)))
     },
     
     Condition => {
@@ -44,42 +46,57 @@ OrList: OrList = {
 
 Condition: ComparisonOp = {
     <l:Literal> "<" <r:Literal> => {
-        ComparisonOp::new(parser::LESS_THAN,l,r)
+        ComparisonOp::new(parsedefs::LESS_THAN,l,r)
     },
 
     <l:Literal> ">" <r:Literal> => {
-        ComparisonOp::new(parser::GREATER_THAN,l,r)
+        ComparisonOp::new(parsedefs::GREATER_THAN,l,r)
     },
 
     <l:Literal> "=" <r:Literal> => {
-        ComparisonOp::new(parser::EQUALS,l,r)
+        ComparisonOp::new(parsedefs::EQUALS,l,r)
     }
 };
 
 Literal: Operand = {
     INT => {
-        Operand::new(parser::INT, <>)
+        Operand::new(parsedefs::INT, <>)
     },
 
     DOUBLE => {
-        Operand::new(parser::DOUBLE, <>)
+        Operand::new(parsedefs::DOUBLE, <>)
     },
 
     STRING => {
-       Operand::new(parser::STRING, <>)
+       Operand::new(parsedefs::STRING, <>)
+    },
+
+    NAME => {
+        Operand::new(parsedefs::NAME, <>)
     }
 };
 
-INT: i64 = {
-    r"[0-9]+" => i64::from_str(<>).unwrap(),
+INT: String = {
+    r"[0-9]+" => (<>).to_string(),
 }
 
-DOUBLE: f64 = {
-    r"[0-9]+\.[0-9]*" => f32::from_str(<>).unwrap(),
+DOUBLE: String = {
+    r"[0-9]+\.[0-9]*" => (<>).to_string(),
 };
 
 STRING: String = {
+    r"'[^\n]*'" => {
+        let len = (<>).len();
+        let s = <>.to_string();
+        let slice = &s[1..(len-1)];
+        let final_slice = &slice.replace("\\", "");
+        final_slice.to_string()
+    }
+}
+
+NAME: String = {
     r"[A-Za-z][A-Za-z0-9_-]*" => (<>).to_string(),
+
 }
 
 OR: String = {

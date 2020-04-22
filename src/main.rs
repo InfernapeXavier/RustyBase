@@ -3,6 +3,10 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 
+// Importing the parser
+#[macro_use]
+extern crate lalrpop_util;
+
 // STD Imports
 use std::io;
 use std::io::prelude::*;
@@ -12,12 +16,12 @@ use std::path::Path;
 mod comparison;
 mod defs;
 mod file;
-mod parser;
+mod parsedefs;
 mod record;
 mod schema;
 
 // LALRPOP Parser to parse inputs
-// lalrpop_mod!(pub parser);
+lalrpop_mod!(pub parser);
 
 fn main() {
     println!("\n\nExecuting Main.........");
@@ -83,4 +87,12 @@ fn test2() {
     my_schema = my_schema.build(catalog, "nation");
     let my_comparison = comparison::CNF::new();
     my_comparison.grow_from_parse_tree();
+}
+
+#[test]
+fn lalrtest() {
+    let expression = parser::ParseTreeParser::new()
+        .parse("(l_orderkey > 27) AND (l_orderkey < 'don't')")
+        .unwrap();
+    println!("{:#?}", expression);
 }

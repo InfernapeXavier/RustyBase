@@ -17,7 +17,7 @@ mod record;
 mod schema;
 
 // LALRPOP Parser to parse inputs
-lalrpop_mod!(pub parser);
+// lalrpop_mod!(pub parser);
 
 fn main() {
     println!("\n\nExecuting Main.........");

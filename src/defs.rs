@@ -5,7 +5,6 @@ use std::collections::LinkedList;
 // derive clone and copy implement a Copy method
 // these can't be defined as outer because of the functions in this file
 #[derive(Debug, PartialEq, Clone, Copy)]
-
 pub enum DataType {
     INT,
     DOUBLE,
@@ -13,7 +12,6 @@ pub enum DataType {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-
 pub enum Target {
     Left,
     Right,
@@ -21,7 +19,6 @@ pub enum Target {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-
 pub enum CompOperator {
     LessThan,
     GreaterThan,

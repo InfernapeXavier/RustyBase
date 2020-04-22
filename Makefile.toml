@@ -24,6 +24,8 @@ dependencies = ["clean"]
 script = [
     "rm -r src/scratch/*.exe",
     "rm -r src/scratch/*.pdb",
+    "rm -r src/*.exe",
+    "rm -r src/*.pdb",
 ]
 
 dependencies = [

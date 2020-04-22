@@ -1,17 +1,17 @@
 use std::str::FromStr;
-use crate::parser;
+use crate::parser::{Operand, ComparisonOp, OrList, AndList};
 grammar;
 
 match {
     "<",
-    "",
+    "=",
     ">",
     "(",
     ")",
     "AND",
     "OR",
     r"[0-9]+", // Int
-    r"[0-9]+(\.[0-9]*)*", // Float
+    r"[0-9]+\.[0-9]*", // Float
     r"[A-Za-z][A-Za-z0-9_-]*", // String
 
 
@@ -19,37 +19,73 @@ match {
     r"\s*" => { },
     r"//[^\n\r]*[\n\r]*" => { }, // `// comment`
     r"/\*([^\*]*\*+[^\*/])*([^\*]*\*+|[^\*])*\*/" => { }, // `/* comment */`
-    // Handle "'" in Strings
+    // TODO:Handle "'" in Strings
 }
 
-pub Expr: f32 = {
-    <l:Expr> "+" <r:Factor> => l + r,
-    <l:Expr> "-" <r:Factor> => l - r,
-    Factor,
-};
+pub ParseTree: AndList = {
+    "(" <o:OrList> ")" AND <a:ParseTree> => {
+        AndList::new(o,a)
+    },
 
-Factor: f32 = {
-    <l:Factor> "*" <r:Term> => l * r,
-    <l:Factor> "/" <r:Term> => l / r,
-    Term,
-};
-
-Literal: parser::Operand = {
-    INT => {
-        Operand {
-            
-        }
+    "(" OrList ")" => {
+        AndList::new(<>, None)
     }
 };
 
-FLOAT: f32 = {
-    r"[0-9]+(\.[0-9]*)*" => f32::from_str(<>).unwrap(),
-};
-
-INT: i32 = {
-    r"[0-9]+" => i32::from_str(<>).unwrap(),
+OrList: OrList = {
+    <l:Condition> OR <r:OrList> => {
+        OrList::new(l,r)
+    },
+    
+    Condition => {
+        OrList::new(<>, None)
+    }
 }
 
+Condition: ComparisonOp = {
+    <l:Literal> "<" <r:Literal> => {
+        ComparisonOp::new(parser::LESS_THAN,l,r)
+    },
+
+    <l:Literal> ">" <r:Literal> => {
+        ComparisonOp::new(parser::GREATER_THAN,l,r)
+    },
+
+    <l:Literal> "=" <r:Literal> => {
+        ComparisonOp::new(parser::EQUALS,l,r)
+    }
+};
+
+Literal: Operand = {
+    INT => {
+        Operand::new(parser::INT, <>)
+    },
+
+    DOUBLE => {
+        Operand::new(parser::DOUBLE, <>)
+    },
+
+    STRING => {
+       Operand::new(parser::STRING, <>)
+    }
+};
+
+INT: i64 = {
+    r"[0-9]+" => i64::from_str(<>).unwrap(),
+}
+
+DOUBLE: f64 = {
+    r"[0-9]+\.[0-9]*" => f32::from_str(<>).unwrap(),
+};
+
 STRING: String = {
-    r"[A-Za-z][A-Za-z0-9_-]*" => (<>)
+    r"[A-Za-z][A-Za-z0-9_-]*" => (<>).to_string(),
+}
+
+OR: String = {
+    "OR" => (<>).to_string(),
+}
+
+AND: String = {
+    "AND" => (<>).to_string(),
 }

@@ -1,4 +1,4 @@
-#![allow(unused_assignments)]
+// #![allow(unused_assignments)]
 
 use crate::defs::{CompOperator, DataType, Target};
 use crate::parsedefs;
@@ -128,7 +128,7 @@ impl CNF {
         }
     }
 
-    fn print(&self) {
+    pub fn print(&self) {
         for x in 0..self.num_ands {
             print!("( ");
             for y in 0..self.or_lens[x] {
@@ -147,11 +147,11 @@ impl CNF {
     pub fn grow_from_parse_tree(
         mut self,
         mut parse_tree: AndList,
+        out_rec_file: &File,
         my_schema: &Schema,
         literal: &mut Record,
-    ) {
+    ) -> CNF {
         // Building up the literal and schema in an external text file to read from later
-        let out_rec_file = File::create("sdafdsfFFDSDA").expect("Could not create record file");
         let mut out_schema_file =
             File::create("hkljdfgkSDFSDF").expect("Could not create schema file");
         out_schema_file
@@ -168,16 +168,16 @@ impl CNF {
             let mut my_or: OrList = *parse_tree.left;
             let mut which_or = 0;
             loop {
-                let mut type_left: DataType = DataType::INT;
-                let mut type_right: DataType = DataType::INT;
+                let type_left: DataType;
+                let type_right: DataType;
 
                 // Required for building the Comparison structure locally
-                let mut operand_one: Target = Target::Left;
-                let mut operand_two: Target = Target::Right;
-                let mut which_att_one: i64 = 0;
-                let mut which_att_two: i64 = 0;
-                let mut att_type: DataType = DataType::INT;
-                let mut op: CompOperator = CompOperator::LessThan;
+                let operand_one: Target;
+                let operand_two: Target;
+                let which_att_one: i64;
+                let which_att_two: i64;
+                let att_type: DataType;
+                let op: CompOperator;
 
                 // dealing with the left operand
                 match my_or.left.left.code {
@@ -360,6 +360,7 @@ impl CNF {
         literal.suck_next_record(&out_schema);
         fs::remove_file(out_schema_path).expect("Failed to remove temporary schema file");
         fs::remove_file(out_rec_path).expect("Failed to remove temporary record file");
+        self
     }
 }
 
@@ -374,13 +375,13 @@ fn add_lit_to_file(
         .write_all(format!("{}|", value).as_bytes())
         .expect("Could not write to file");
     match my_type {
-        DataType::INT => out_schema_file
+        a if a == DataType::INT => out_schema_file
             .write_all(format!("att{} Int\n", num_fields_in_lit).as_bytes())
             .expect("Could not write to file"),
-        DataType::DOUBLE => out_schema_file
+        a if a == DataType::DOUBLE => out_schema_file
             .write_all(format!("att{} Double\n", num_fields_in_lit).as_bytes())
             .expect("Could not write to file"),
-        DataType::STRING => out_schema_file
+        a if a == DataType::STRING => out_schema_file
             .write_all(format!("att{} String\n", num_fields_in_lit).as_bytes())
             .expect("Could not write to file"),
         _ => panic!("I don't know that type!\n"),

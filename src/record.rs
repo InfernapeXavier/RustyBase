@@ -3,7 +3,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 // Custom Import
-use crate::schema;
+use crate::schema::Schema;
 
 pub struct Record {
     bits: Vec<String>,
@@ -41,12 +41,12 @@ impl Record {
         self.bits = from_me.bits
     }
 
-    pub fn print(&self, my_schema: &schema::Schema) {
+    pub fn print(&self, my_schema: &Schema) {
         let n = my_schema.get_num_atts();
         println!("{:#?}", self.bits);
     }
 
-    pub fn suck_next_record(&mut self, my_schema: &schema::Schema) -> usize {
+    pub fn suck_next_record(&mut self, my_schema: &Schema) -> usize {
         // // clearing out the current record
         // self.bits = Vec::new();
         let newline = self.reader.next();

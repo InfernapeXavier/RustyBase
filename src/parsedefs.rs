@@ -1,9 +1,9 @@
 // use crate::defs::{DataType, CompOperator}
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Operand {
-    code: usize,
-    value: String,
+    pub code: usize,
+    pub value: String,
 }
 
 impl Operand {
@@ -12,11 +12,11 @@ impl Operand {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ComparisonOp {
-    code: usize,
-    left: Operand,
-    right: Operand,
+    pub code: usize,
+    pub left: Operand,
+    pub right: Operand,
 }
 
 impl ComparisonOp {
@@ -25,10 +25,10 @@ impl ComparisonOp {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct OrList {
-    left: ComparisonOp,
-    right_or: Option<Box<OrList>>,
+    pub left: ComparisonOp,
+    pub right_or: Option<Box<OrList>>,
 }
 
 impl OrList {
@@ -37,10 +37,10 @@ impl OrList {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AndList {
-    left: Box<OrList>,
-    right_and: Option<Box<AndList>>,
+    pub left: Box<OrList>,
+    pub right_and: Option<Box<AndList>>,
 }
 
 impl AndList {

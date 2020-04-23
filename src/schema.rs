@@ -1,17 +1,17 @@
-use crate::defs;
+use crate::defs::DataType;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 #[derive(Debug)]
 pub struct Attribute {
     name: String,
-    my_type: defs::DataType,
+    my_type: DataType,
 }
 impl Attribute {
     pub fn new() -> Attribute {
         Attribute {
             name: String::from("name"),
-            my_type: defs::DataType::INT,
+            my_type: DataType::INT,
         }
     }
 }
@@ -36,24 +36,24 @@ impl Schema {
         }
     }
 
-    fn find(&self, att_name: String) -> i64 {
+    pub fn find(&self, att_name: &String) -> i64 {
         for x in 0..self.num_atts {
             let y = x as usize; // can't index using integer
-            if att_name == self.my_atts[y].name {
+            if *att_name == self.my_atts[y].name {
                 return x;
             }
         }
         -1
     }
 
-    fn find_type(&self, att_name: String) -> &defs::DataType {
+    pub fn find_type(&self, att_name: &String) -> DataType {
         for x in 0..self.num_atts {
             let y = x as usize; // can't index using integer
-            if att_name == self.my_atts[y].name {
-                return &self.my_atts[y].my_type;
+            if *att_name == self.my_atts[y].name {
+                return self.my_atts[y].my_type;
             }
         }
-        &defs::DataType::INT
+        DataType::INT
     }
 
     pub fn get_num_atts(&self) -> i64 {
@@ -114,11 +114,11 @@ impl Schema {
                         let mut my_attribute = Attribute::new();
                         my_attribute.name = (vec[0]).to_string();
                         if vec[1] == "Int" {
-                            my_attribute.my_type = defs::DataType::INT;
+                            my_attribute.my_type = DataType::INT;
                         } else if vec[1] == "Double" {
-                            my_attribute.my_type = defs::DataType::DOUBLE;
+                            my_attribute.my_type = DataType::DOUBLE;
                         } else if vec[1] == "String" {
-                            my_attribute.my_type = defs::DataType::STRING;
+                            my_attribute.my_type = DataType::STRING;
                         } else {
                             panic!("Bad Attribute type for {:#?}", my_attribute.my_type)
                         }
@@ -129,7 +129,6 @@ impl Schema {
                 }
             }
         }
-
         self
     }
 }

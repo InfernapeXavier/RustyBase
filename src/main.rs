@@ -85,8 +85,8 @@ fn test2() {
     let mut my_schema = schema::Schema::new();
     let catalog = Path::new("src/scratch/catalog");
     my_schema = my_schema.build(catalog, "nation");
-    let my_comparison = comparison::CNF::new();
-    my_comparison.grow_from_parse_tree();
+    // let my_comparison = comparison::CNF::new();
+    // my_comparison.grow_from_parse_tree();
 }
 
 #[test]

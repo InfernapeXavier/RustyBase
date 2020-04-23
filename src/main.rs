@@ -14,6 +14,7 @@ use std::io::prelude::*;
 use std::path::Path;
 
 // Custom imports
+mod comparisionengine;
 mod comparison;
 mod defs;
 mod file;
@@ -105,4 +106,19 @@ fn lalrtest() {
         .parse("(l_orderkey > 27) AND (l_orderkey < 'don't')")
         .unwrap();
     println!("{:#?}", expression);
+}
+
+#[test]
+fn record_test() {
+    let mut my_schema = schema::Schema::new();
+
+    let catalog = Path::new("src/scratch/catalog");
+    my_schema = my_schema.build(catalog, "nation");
+    let path = Path::new("src/scratch/nation.tbl");
+
+    let mut my_record = record::Record::new(path);
+    my_record.suck_next_record(&my_schema);
+    my_record.print(&my_schema);
+    my_record.suck_next_record(&my_schema);
+    my_record.print(&my_schema);
 }

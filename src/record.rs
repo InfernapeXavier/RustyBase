@@ -1,8 +1,10 @@
 // STD Imports
+use std::convert::TryInto;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 // Custom Import
+use crate::defs::DataType;
 use crate::schema::Schema;
 
 pub struct Record {
@@ -21,7 +23,7 @@ impl Record {
         }
     }
     // returns the bit contents of the vector
-    fn get_bits(&self) -> &Vec<String> {
+    pub fn get_bits(&self) -> &Vec<String> {
         &self.bits
     }
 
@@ -42,8 +44,23 @@ impl Record {
     }
 
     pub fn print(&self, my_schema: &Schema) {
-        let n = my_schema.get_num_atts();
-        println!("{:#?}", self.bits);
+        let n: usize = my_schema.get_num_atts().try_into().unwrap();
+        let atts = my_schema.get_atts();
+        for x in 0..n {
+            print!("{}: [", atts[x].name);
+
+            if atts[x].my_type == DataType::INT {
+                let value = self.bits[x].parse::<i32>().unwrap();
+                println!("{}],", value);
+            } else if atts[x].my_type == DataType::DOUBLE {
+                let value = self.bits[x].parse::<f32>().unwrap();
+                println!("{}],", value);
+            } else if atts[x].my_type == DataType::STRING {
+                let value = &self.bits[x];
+                println!("{}],", value);
+            }
+        }
+        // println!("{:#?}", self.bits);
     }
 
     pub fn suck_next_record(&mut self, my_schema: &Schema) -> usize {

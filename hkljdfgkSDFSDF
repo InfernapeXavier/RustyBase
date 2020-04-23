@@ -1,0 +1,6 @@
+BEGIN
+tempSchema
+wherever
+att0 Int
+att1 Int
+END

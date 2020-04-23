@@ -4,8 +4,8 @@ use std::io::{BufRead, BufReader};
 
 #[derive(Debug)]
 pub struct Attribute {
-    name: String,
-    my_type: DataType,
+    pub name: String,
+    pub my_type: DataType,
 }
 impl Attribute {
     pub fn new() -> Attribute {

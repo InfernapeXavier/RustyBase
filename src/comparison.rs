@@ -12,10 +12,10 @@ use std::path::Path;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Comparison {
-    operand_one: Target,
-    operand_two: Target,
-    which_att_one: i64,
-    which_att_two: i64,
+    pub operand_one: Target,
+    pub operand_two: Target,
+    pub which_att_one: i64,
+    pub which_att_two: i64,
 
     att_type: DataType,
 
@@ -155,7 +155,7 @@ impl CNF {
         let mut out_schema_file =
             File::create("hkljdfgkSDFSDF").expect("Could not create schema file");
         out_schema_file
-            .write_all(b"BEGIN\ntempSchema\nwherever")
+            .write_all(b"BEGIN\ntempSchema\nwherever\n")
             .expect("Can't write to schema file");
 
         // Tracks the size of literal record
@@ -358,8 +358,8 @@ impl CNF {
         let mut out_schema: Schema = Schema::new();
         out_schema = out_schema.build(out_schema_path, "tempSchema");
         literal.suck_next_record(&out_schema);
-        fs::remove_file(out_schema_path).expect("Failed to remove temporary schema file");
-        fs::remove_file(out_rec_path).expect("Failed to remove temporary record file");
+        // fs::remove_file(out_schema_path).expect("Failed to remove temporary schema file");
+        // fs::remove_file(out_rec_path).expect("Failed to remove temporary record file");
         self
     }
 }

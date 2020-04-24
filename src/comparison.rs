@@ -17,9 +17,8 @@ pub struct Comparison {
     pub which_att_one: i64,
     pub which_att_two: i64,
 
-    att_type: DataType,
-
-    op: CompOperator,
+    pub att_type: DataType,
+    pub op: CompOperator,
 }
 
 impl Comparison {
@@ -81,7 +80,7 @@ impl Comparison {
             attribute_type = "String";
         }
 
-        println!(
+        print!(
             "Attribute {} from {} {} Attribute {} from {} ({})",
             self.which_att_one,
             target_one,
@@ -113,10 +112,9 @@ impl OrderMaker {
 
 #[derive(Debug, Clone)]
 pub struct CNF {
-    or_list: Vec<Vec<Comparison>>,
-
-    or_lens: Vec<usize>,
-    num_ands: usize,
+    pub or_list: Vec<Vec<Comparison>>,
+    pub or_lens: Vec<usize>,
+    pub num_ands: usize,
 }
 
 impl CNF {
@@ -128,6 +126,10 @@ impl CNF {
         }
     }
 
+    pub fn display(&self) {
+        println!("\n{:#?}", self);
+    }
+
     pub fn print(&self) {
         for x in 0..self.num_ands {
             print!("( ");
@@ -137,9 +139,9 @@ impl CNF {
                     print!(" OR ");
                 }
             }
-            print!(") ");
+            println!(") ");
             if x < self.num_ands - 1 {
-                println!(" AND");
+                println!("AND");
             }
         }
     }
@@ -358,8 +360,8 @@ impl CNF {
         let mut out_schema: Schema = Schema::new();
         out_schema = out_schema.build(out_schema_path, "tempSchema");
         literal.suck_next_record(&out_schema);
-        // fs::remove_file(out_schema_path).expect("Failed to remove temporary schema file");
-        // fs::remove_file(out_rec_path).expect("Failed to remove temporary record file");
+        fs::remove_file(out_schema_path).expect("Failed to remove temporary schema file");
+        fs::remove_file(out_rec_path).expect("Failed to remove temporary record file");
         self
     }
 }

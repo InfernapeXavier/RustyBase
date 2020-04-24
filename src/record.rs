@@ -60,7 +60,7 @@ impl Record {
                 println!("{}],", value);
             }
         }
-        // println!("{:#?}", self.bits);
+        println!("{:#?}", self.bits);
     }
 
     pub fn suck_next_record(&mut self, my_schema: &Schema) -> usize {

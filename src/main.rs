@@ -74,15 +74,6 @@ fn test1() {
 
 #[test]
 fn test2() {
-    // print!("\n\nEnter in your CNF: ");
-    // io::stdout().flush().unwrap();
-    // let mut input = String::new();
-    // io::stdin()
-    //     .read_line(&mut input)
-    //     .expect("Can't parse your CNF");
-    // input = input.trim().to_string();
-    // println!("\n\nYou entered: {}", input);
-
     let parse_tree = parser::ParseTreeParser::new()
         .parse("(l_orderkey > 27) AND (l_orderkey < 45)")
         .unwrap();
@@ -90,7 +81,7 @@ fn test2() {
     // Creating Schema
     let mut my_schema = schema::Schema::new();
     let catalog = Path::new("src/scratch/catalog");
-    my_schema = my_schema.build(catalog, "nation");
+    my_schema = my_schema.build(catalog, "lineitem");
     let out_rec_file = File::create("sdafdsfFFDSDA").expect("Could not create record file");
     let out_rec_path = Path::new("sdafdsfFFDSDA");
     let mut literal = record::Record::new(out_rec_path);
@@ -98,6 +89,7 @@ fn test2() {
     my_comparison =
         my_comparison.grow_from_parse_tree(parse_tree, &out_rec_file, &my_schema, &mut literal);
     my_comparison.print();
+    my_comparison.display();
 }
 
 #[test]

@@ -32,6 +32,7 @@ fn main() {
 #[test]
 fn main_test() {
     // EG Input: (l_orderkey > 27) AND (l_orderkey < 45)
+    // EG Input: (l_orderkey = 33)
 
     // Getting Input
     print!("\n\nEnter in your CNF: ");

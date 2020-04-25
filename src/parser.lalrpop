@@ -57,10 +57,12 @@ Condition: ComparisonOp = {
 
     <l:Literal> "=" <r:Literal> => {
         ComparisonOp::new(parsedefs::EQUALS,l,r)
-    }
+    },
 
     Literal => {
-        ComparisonOp::new(parsedefs::EQUALS, <>, <>)
+        let lit_one = <>;
+        let lit_two = lit_one.clone();
+        ComparisonOp::new(parsedefs::EQUALS, lit_one, lit_two)
     }
 };
 

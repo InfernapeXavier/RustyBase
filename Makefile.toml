@@ -21,15 +21,20 @@ args = ["test"]
 dependencies = ["clean"]
 
 [tasks.project]
+dependencies = [
+    "format",
+    "build",
+    "test"
+]
+
+[tasks.cleaner]
 script = [
     "rm -r src/scratch/*.exe",
     "rm -r src/scratch/*.pdb",
     "rm -r src/*.exe",
     "rm -r src/*.pdb",
 ]
-
 dependencies = [
     "format",
-    "build",
-    "test"
+    "clean"
 ]

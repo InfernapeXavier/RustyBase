@@ -7,6 +7,7 @@ use std::io::{BufRead, BufReader};
 use crate::defs::DataType;
 use crate::schema::Schema;
 
+#[derive(Debug)]
 pub struct Record {
     bits: Vec<String>,
     // Stores the value of the reader to make sure we always get the next record in order

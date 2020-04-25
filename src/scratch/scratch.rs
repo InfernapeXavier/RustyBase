@@ -1,6 +1,13 @@
+use std::mem;
+
 fn main() {
-    // let mut vec = Vec::new();
-    // vec.push(1);
-    // print!("{:#?}", vec);
-    println!("{}", ("3" < "27"));
+    let a = ['a', 'b', 'c', 'd'];
+
+    let mut iter = a.iter().enumerate();
+    match iter.next() {
+        Some(x) => println!("{:#?}, {}", x.0, x.1),
+        None => print!("Error"),
+    }
+
+    print!("{:#?}", mem::size_of_val(&a));
 }

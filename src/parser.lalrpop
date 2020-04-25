@@ -58,6 +58,10 @@ Condition: ComparisonOp = {
     <l:Literal> "=" <r:Literal> => {
         ComparisonOp::new(parsedefs::EQUALS,l,r)
     }
+
+    Literal => {
+        ComparisonOp::new(parsedefs::EQUALS, <>, <>)
+    }
 };
 
 // Returns Operand built with the DataType and the input value

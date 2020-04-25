@@ -51,19 +51,20 @@ impl Record {
 
             if atts[x].my_type == DataType::INT {
                 let value = self.bits[x].parse::<i32>().unwrap();
-                println!("{}],", value);
+                print!("{}], ", value);
             } else if atts[x].my_type == DataType::DOUBLE {
                 let value = self.bits[x].parse::<f32>().unwrap();
-                println!("{}],", value);
+                print!("{}], ", value);
             } else if atts[x].my_type == DataType::STRING {
                 let value = &self.bits[x];
-                println!("{}],", value);
+                print!("{}], ", value);
             }
         }
-        println!("{:#?}", self.bits);
+        // println!("{:#?}", self.bits);
+        println!("");
     }
 
-    pub fn suck_next_record(&mut self, my_schema: &Schema) -> usize {
+    pub fn suck_next_record(&mut self, my_schema: &Schema) -> bool {
         // // clearing out the current record
         // self.bits = Vec::new();
         let newline = self.reader.next();
@@ -75,13 +76,13 @@ impl Record {
         let mut vec: Vec<&str> = newline.split('|').collect();
         vec.pop();
         if vec.is_empty() {
-            0
+            false
         } else {
             self.bits = Vec::new();
             for x in vec {
                 self.bits.push(x.to_string());
             }
-            1
+            true
         }
     }
 }

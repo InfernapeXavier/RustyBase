@@ -1,15 +1,17 @@
-// #![allow(unused_assignments)]
-
+// Here, the imports are different to namespace them into this file for easier access
 use crate::defs::{CompOperator, DataType, Target};
 use crate::parsedefs;
 use crate::parsedefs::{AndList, ComparisonOp, Operand, OrList};
 use crate::record::Record;
 use crate::schema::Schema;
+
+// STD Imports for File
 use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
+// This stores the individual comparison that is part of the CNF
 #[derive(Debug, Clone, Copy)]
 pub struct Comparison {
     pub operand_one: Target,
@@ -92,6 +94,7 @@ impl Comparison {
     }
 }
 
+// This encapsulates the sort order for records
 #[derive(Debug, Clone)]
 pub struct OrderMaker {
     num_atts: usize,
@@ -110,6 +113,7 @@ impl OrderMaker {
     }
 }
 
+// This structure stores a CNF expression that is to be evaluated during query execution
 #[derive(Debug, Clone)]
 pub struct CNF {
     pub or_list: Vec<Vec<Comparison>>,
@@ -118,16 +122,13 @@ pub struct CNF {
 }
 
 impl CNF {
+    // Rust cannot initialize empty structures
     pub fn new() -> CNF {
         CNF {
             or_list: Vec::new(),
             or_lens: Vec::new(),
             num_ands: 0,
         }
-    }
-
-    pub fn display(&self) {
-        println!("\n{:#?}", self);
     }
 
     pub fn print(&self) {
@@ -146,6 +147,8 @@ impl CNF {
         }
     }
 
+    // This takes a parse tree for a CNF and converts it into a 2-D matrix
+    // This version is applicable to selections over a single relation
     pub fn grow_from_parse_tree(
         mut self,
         mut parse_tree: AndList,

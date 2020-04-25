@@ -11,8 +11,8 @@ struct Record {
     bits: Vec<char>,
 }
 
-    use std::fs::File;
-    use std::io::{BufRead, BufReader};
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 
 pub const PAGE_SIZE: usize = 131_072;
 
@@ -21,7 +21,6 @@ fn main() {
     let my_schema = blank_schema.build("catalog", "nation");
 
     suck_next_record(&my_schema, &my_schema.file_name);
-
 }
 #[derive(Debug)]
 
@@ -42,18 +41,16 @@ pub struct Attribute {
 }
 
 impl Attribute {
+    // Rust cannot initialize empty structures
     pub fn new() -> Attribute {
-        Attribute{
+        Attribute {
             name: String::from("name"),
-            my_type: DataType::INT
+            my_type: DataType::INT,
         }
-
     }
 }
 
 fn suck_next_record(my_schema: &Schema, file_name: &str) {
-
-    
     let space: Vec<char> = Vec::with_capacity(PAGE_SIZE);
     let rec_space: Vec<char> = Vec::with_capacity(PAGE_SIZE);
 
@@ -71,15 +68,10 @@ fn suck_next_record(my_schema: &Schema, file_name: &str) {
         let mut vec: Vec<&str> = line.split("|").collect();
         vec.pop();
         println!("{:#?}", vec)
-
     }
-
-
 }
 
-
 impl Schema {
-
     pub fn get_num_atts(&self) -> i64 {
         self.num_atts
     }
@@ -89,10 +81,11 @@ impl Schema {
     }
 
     pub fn new() -> Schema {
+        // Rust cannot initialize empty structures
         Schema {
             num_atts: 0,
             my_atts: Vec::new(),
-            file_name: String::from("")
+            file_name: String::from(""),
         }
     }
 
@@ -117,14 +110,12 @@ impl Schema {
 
             if line.trim() == "BEGIN" {
                 is_schema = true;
-
             } else if is_schema {
                 if !is_required {
                     // we haven't found the required schema yet
                     if line.trim() == rel_name {
                         // we have the required schema
                         is_required = true;
-
                     } else {
                         is_schema = false;
                     }

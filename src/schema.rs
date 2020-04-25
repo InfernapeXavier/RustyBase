@@ -8,6 +8,7 @@ pub struct Attribute {
     pub my_type: DataType,
 }
 impl Attribute {
+    // Rust cannot initialize empty structures
     pub fn new() -> Attribute {
         Attribute {
             name: String::from("name"),
@@ -21,13 +22,13 @@ pub struct Schema {
     num_atts: i64,
     my_atts: Vec<Attribute>,
 
-    // physical location of binary file storing the relation
+    // File storing the relation
     file_name: String,
-    // friend class Record;
 }
 
 // schema functions
 impl Schema {
+    // Rust cannot initialize empty structures
     pub fn new() -> Schema {
         Schema {
             num_atts: 0,
@@ -36,6 +37,7 @@ impl Schema {
         }
     }
 
+    // Returns position of required attribute
     pub fn find(&self, att_name: &String) -> i64 {
         for x in 0..self.num_atts {
             let y = x as usize; // can't index using integer
@@ -46,6 +48,7 @@ impl Schema {
         -1
     }
 
+    // Returns type of given attribute
     pub fn find_type(&self, att_name: &String) -> DataType {
         for x in 0..self.num_atts {
             let y = x as usize; // can't index using integer
@@ -56,14 +59,17 @@ impl Schema {
         DataType::INT
     }
 
+    // Returns number of attributes
     pub fn get_num_atts(&self) -> i64 {
         self.num_atts
     }
 
+    // Returns all attributes
     pub fn get_atts(&self) -> &Vec<Attribute> {
         &self.my_atts
     }
 
+    // Builds the actual schema structure
     pub fn build(mut self, file_name: &std::path::Path, rel_name: &str) -> Schema {
         let file_ref = File::open(file_name).expect("Unable to open Schema File"); // open file in read mode
         let reader = BufReader::new(file_ref);

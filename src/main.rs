@@ -22,7 +22,7 @@ mod parsedefs;
 mod record;
 mod schema;
 
-// LALRPOP Parser to parse inputs
+// Defining LALRPOP Parser to parse inputs
 lalrpop_mod!(pub parser);
 
 fn main() {
@@ -40,7 +40,6 @@ fn main_test() {
         .expect("Can't read your CNF");
     // Parsing the CNF
     let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
-    // println!("{:#?}", expression);
 
     // Building the schema
     let catalog = Path::new("src/tpch/catalog");

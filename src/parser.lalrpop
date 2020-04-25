@@ -21,9 +21,9 @@ match {
     r"\s*" => { },
     r"//[^\n\r]*[\n\r]*" => { }, // `// comment`
     r"/\*([^\*]*\*+[^\*/])*([^\*]*\*+|[^\*])*\*/" => { }, // `/* comment */`
-    // TODO:Handle "'" in Strings
 }
 
+// Returns the final ParseTree via ParseTreeParser
 pub ParseTree: AndList = {
     "(" <o:OrList> ")" AND <a:ParseTree> => {
         AndList::new(Box::new(o), Some(Box::new(a)))
@@ -34,6 +34,7 @@ pub ParseTree: AndList = {
     }
 };
 
+// Returns OrList
 OrList: OrList = {
     <l:Condition> OR <r:OrList> => {
         OrList::new(l,Some(Box::new(r)))
@@ -44,6 +45,7 @@ OrList: OrList = {
     }
 }
 
+// Returns ComparisonOp built with the Operator, Left Operand and Right Operand
 Condition: ComparisonOp = {
     <l:Literal> "<" <r:Literal> => {
         ComparisonOp::new(parsedefs::LESS_THAN,l,r)
@@ -58,6 +60,7 @@ Condition: ComparisonOp = {
     }
 };
 
+// Returns Operand built with the DataType and the input value
 Literal: Operand = {
     INT => {
         Operand::new(parsedefs::INT, <>)
@@ -77,11 +80,11 @@ Literal: Operand = {
 };
 
 INT: String = {
-    r"[0-9]+" => (<>).to_string(),
+    r"[0-9]+" => (<>).to_string(), // returns number as string
 }
 
 DOUBLE: String = {
-    r"[0-9]+\.[0-9]*" => (<>).to_string(),
+    r"[0-9]+\.[0-9]*" => (<>).to_string(), // returns number as string
 };
 
 STRING: String = {
@@ -89,20 +92,20 @@ STRING: String = {
         let len = (<>).len();
         let s = <>.to_string();
         let slice = &s[1..(len-1)];
-        let final_slice = &slice.replace("\\", "");
+        let final_slice = &slice.replace("\\", ""); // handles "'" in strings
         final_slice.to_string()
     }
 }
 
 NAME: String = {
-    r"[A-Za-z][A-Za-z0-9_-]*" => (<>).to_string(),
+    r"[A-Za-z][A-Za-z0-9_-]*" => (<>).to_string(), //returns string when it is a name
 
 }
 
 OR: String = {
-    "OR" => (<>).to_string(),
+    "OR" => (<>).to_string(), //returns string OR
 }
 
 AND: String = {
-    "AND" => (<>).to_string(),
+    "AND" => (<>).to_string(), //returns string AND
 }

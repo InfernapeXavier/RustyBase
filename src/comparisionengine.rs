@@ -1,10 +1,13 @@
 // STD Imports
 use std::convert::TryInto;
 
+// Custom Imports
 use crate::comparison::{Comparison, CNF};
 use crate::defs::{CompOperator, DataType, Target};
 use crate::record::Record;
 
+// Applies the given CNF and accepts or rejects the record
+// This version is for unary operations
 pub fn compare(left: &Record, literal: &Record, my_comparison: &CNF) -> bool {
     for x in 0..my_comparison.num_ands {
         for y in 0..my_comparison.or_lens[x] {
@@ -20,6 +23,7 @@ pub fn compare(left: &Record, literal: &Record, my_comparison: &CNF) -> bool {
     true
 }
 
+// Internal Function used by Compare
 pub fn run(left: &Record, literal: &Record, c: &Comparison) -> bool {
     let left_bits = left.get_bits();
     let lit_bits = literal.get_bits();

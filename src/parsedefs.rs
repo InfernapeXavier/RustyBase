@@ -1,4 +1,5 @@
-// use crate::defs::{DataType, CompOperator}
+// Derive Debug allows for Pretty Printing for Debugging
+// Derive Clone allows implements a Clone method
 
 #[derive(Debug, Clone)]
 pub struct Operand {
@@ -25,6 +26,7 @@ impl ComparisonOp {
     }
 }
 
+//  For self-referential values, Box Pointer is required. They are dereferenced to get the value in them
 #[derive(Debug, Clone)]
 pub struct OrList {
     pub left: ComparisonOp,
@@ -49,6 +51,7 @@ impl AndList {
     }
 }
 
+// Global Values used by Comparison
 pub const LESS_THAN: usize = 1;
 pub const GREATER_THAN: usize = 2;
 pub const EQUALS: usize = 3;
@@ -57,7 +60,3 @@ pub const DOUBLE: usize = 1;
 pub const INT: usize = 2;
 pub const STRING: usize = 3;
 pub const NAME: usize = 4;
-
-fn main() {
-    println!("Hello")
-}

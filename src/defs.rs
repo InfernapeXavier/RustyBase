@@ -1,8 +1,8 @@
 use std::collections::LinkedList;
 
-// derive debug lets us use the inbuilt formatter for printing
-// derive PartialEq implements a default equality operator
-// derive clone and copy implement a Copy method
+// Derive Debug lets us use the inbuilt formatter for printing
+// Derive PartialEq implements a default equality operator
+// Derive Clone and Copy implement a Copy method
 // these can't be defined as outer because of the functions in this file
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum DataType {

@@ -84,37 +84,37 @@ fn main_test() {
 }
 
 #[test]
-fn page_test() {
-    // EG Input: (l_orderkey > 27) AND (l_orderkey < 45)
+// fn page_test() {
+//     // EG Input: (l_orderkey > 27) AND (l_orderkey < 45)
 
-    // Getting Input
-    print!("\n\nEnter in your CNF: ");
-    io::stdout().flush().unwrap();
-    let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Can't read your CNF");
-    // Parsing the CNF
-    let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
+//     // Getting Input
+//     print!("\n\nEnter in your CNF: ");
+//     io::stdout().flush().unwrap();
+//     let mut input = String::new();
+//     io::stdin()
+//         .read_line(&mut input)
+//         .expect("Can't read your CNF");
+//     // Parsing the CNF
+//     let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
 
-    // Building the schema
-    let catalog = Path::new("src/tpch/catalog");
+//     // Building the schema
+//     let catalog = Path::new("src/tpch/catalog");
 
-    // Need to create the file so that new doesn't fail for literal
-    let out_rec_file = File::create("sdafdsfFFDSDA").expect("Could not create record file");
-    let out_rec_path = Path::new("sdafdsfFFDSDA");
+//     // Need to create the file so that new doesn't fail for literal
+//     let out_rec_file = File::create("sdafdsfFFDSDA").expect("Could not create record file");
+//     let out_rec_path = Path::new("sdafdsfFFDSDA");
 
-    // Building the temp record
-    let table_file = Path::new("src/tpch/lineitem.tbl");
-    let mut temp = record::Record::new(table_file);
+//     // Building the temp record
+//     let table_file = Path::new("src/tpch/lineitem.tbl");
+//     let mut temp = record::Record::new(table_file);
 
-    // Building the schema
-    let mut my_schema = schema::Schema::new();
-    my_schema = my_schema.build(catalog, "lineitem");
+//     // Building the schema
+//     let mut my_schema = schema::Schema::new();
+//     my_schema = my_schema.build(catalog, "lineitem");
 
-    // Building Page
-    let mut my_page = file::Page::new();
-    temp.suck_next_record(&my_schema);
-    my_page.append(temp);
-    println!("{:#?}", my_page);
-}
+//     // Building Page
+//     let mut my_page = file::Page::new();
+//     temp.suck_next_record(&my_schema);
+//     my_page.append(temp);
+//     println!("{:#?}", my_page);
+// }

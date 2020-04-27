@@ -88,7 +88,8 @@ fn main_test() {
 }
 
 #[test]
-fn record_test() {
+fn page_test() {
+    // This test creates a page with all records that match the CNF
     // EG Input: (l_orderkey > 27) AND (l_orderkey < 45)
     // EG Input: (l_orderkey = 33)
 
@@ -146,7 +147,13 @@ fn record_test() {
         }
     }
 
-    print!("{:#?}", my_page)
+    print!("{:#?}", my_page);
+    let mut bin = Vec::new();
+    my_page.to_binary(&mut bin);
+    print!("{:#?}", bin);
+    let mut test_page = file::Page::new();
+    test_page.from_binary(bin);
+    println!("{:#?}", test_page);
     // println!("\n\n{:#?}", temp.bits);
     // println!("{:#?}\n\n", literal.bits);
     // let project_list = vec![

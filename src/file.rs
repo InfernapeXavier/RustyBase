@@ -3,6 +3,7 @@ use std::collections::LinkedList;
 use std::fs;
 use std::io::prelude::*;
 use std::io::{BufRead, BufReader};
+use std::mem;
 use std::path::Path;
 
 // Custom imports
@@ -13,7 +14,7 @@ use crate::schema;
 #[derive(Debug)]
 pub struct Page {
     pub my_recs: Vec<Vec<String>>,
-    num_recs: usize,
+    num_recs: isize,
     cur_size_in_bytes: usize,
 }
 
@@ -47,6 +48,8 @@ impl Page {
         if self.cur_size_in_bytes > defs::PAGE_SIZE {
             false
         } else {
+            // Due to the complications of the ownership model there's no way of appending 'add_me' directly, so its written to a temporary file
+            // And then read and then finally pushed
             {
                 let mut temp_file = fs::File::create("lknlnhjFDFSASP")
                     .expect("Could not create temp file for page");
@@ -71,17 +74,45 @@ impl Page {
                 self.my_recs.push(vec);
                 self.num_recs += 1;
                 fs::remove_file(temp_path).expect("Failed to remove temporary file for page");
+                self.cur_size_in_bytes = mem::size_of_val(&self.my_recs);
                 true
             }
         }
     }
 
-    // pub fn to_binary(&self, bits: &mut Vec<Vec<String>>) {
-    //     &bits.push(vec![self.num_recs.to_string()]);
-    //     for x in &self.my_recs {
-    //         bits.push(x.get_bits().to_vec());
-    //     }
-    // }
+    pub fn to_binary(&self, bits: &mut Vec<Vec<String>>) {
+        // Copy number of records
+        &bits.push(vec![self.num_recs.to_string()]);
+        // Copy each record one-by-one
+        for x in &self.my_recs {
+            bits.push(x.to_vec());
+        }
+    }
+
+    pub fn from_binary(&mut self, bits: Vec<Vec<String>>) {
+        // Read number of records on the page
+        self.num_recs = bits[0][0].parse::<isize>().unwrap();
+        // Sanity check
+        if self.num_recs > 1_000_000 || self.num_recs < 0 {
+            panic!(
+                "This is probably an error. Found {} records on a page",
+                self.num_recs
+            );
+        }
+
+        // Clear current list of records
+        self.my_recs.clear();
+        let mut iter = bits.iter();
+        iter.next();
+        for x in 0..self.num_recs {
+            match iter.next() {
+                Some(x) => self.my_recs.push(x.to_vec()),
+                None => panic!("Value of num_recs and actual number of records don't match!"),
+            }
+        }
+
+        self.cur_size_in_bytes = mem::size_of_val(&self.my_recs);
+    }
 }
 
 #[derive(Debug, Clone)]

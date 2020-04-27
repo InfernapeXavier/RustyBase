@@ -17,7 +17,7 @@ dependencies = ["clean"]
 
 [tasks.test]
 command = "cargo"
-args = ["test"]["< in"]
+args = ["test < in"]
 dependencies = ["clean"]
 
 [tasks.project]

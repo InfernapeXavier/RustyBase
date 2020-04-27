@@ -49,28 +49,75 @@ fn main_test() {
     let mut lineitem = schema::Schema::new();
     lineitem = lineitem.build(catalog, "lineitem");
 
-    // Need to create the file so that new doesn't fail for literal
-    let out_rec_file = File::create("sdafdsfFFDSDA").expect("Could not create record file");
-    let out_rec_path = Path::new("sdafdsfFFDSDA");
-
     // Building the literal record
-    let mut literal = record::Record::new(out_rec_path);
+    let mut literal = record::Record::new();
 
     // Building the CNF
     let mut my_comparison = comparison::CNF::new();
-    my_comparison =
-        my_comparison.grow_from_parse_tree(expression, &out_rec_file, &lineitem, &mut literal);
+    my_comparison = my_comparison.grow_from_parse_tree(expression, &lineitem, &mut literal);
 
     // Building the temp record
     let table_file = Path::new("src/tpch/lineitem.tbl");
-    let mut temp = record::Record::new(table_file);
+    let mut temp = record::Record::new();
 
     // Building the schema
     let mut my_schema = schema::Schema::new();
     my_schema = my_schema.build(catalog, "lineitem");
 
     let mut counter = 0;
-    while temp.suck_next_record(&my_schema) {
+    while temp.suck_next_record(&my_schema, table_file) {
+        counter = counter + 1;
+
+        if counter % 10000 == 0 {
+            println!("{}", counter);
+        }
+
+        if comparisionengine::compare(&temp, &literal, &my_comparison) {
+            // temp.print(&my_schema);
+        }
+    }
+}
+
+#[test]
+fn page_test() {
+    // EG Input: (l_orderkey > 27) AND (l_orderkey < 45)
+    // EG Input: (l_orderkey = 33)
+
+    // Getting Input
+    print!("\n\nEnter in your CNF: ");
+    io::stdout().flush().unwrap();
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Can't read your CNF");
+    // Parsing the CNF
+    let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
+
+    // Building the schema
+    let catalog = Path::new("src/tpch/catalog");
+    let mut lineitem = schema::Schema::new();
+    lineitem = lineitem.build(catalog, "lineitem");
+
+    // Building the literal record
+    let mut literal = record::Record::new();
+
+    // Building the CNF
+    let mut my_comparison = comparison::CNF::new();
+    my_comparison = my_comparison.grow_from_parse_tree(expression, &lineitem, &mut literal);
+
+    // Building the temp record
+    let table_file = Path::new("src/tpch/lineitem.tbl");
+    let mut temp = record::Record::new();
+
+    // Building the schema
+    let mut my_schema = schema::Schema::new();
+    my_schema = my_schema.build(catalog, "lineitem");
+
+    // Building Page
+    let mut my_page = file::Page::new();
+
+    let mut counter = 0;
+    while temp.suck_next_record(&my_schema, table_file) {
         counter = counter + 1;
 
         if counter % 10000 == 0 {
@@ -81,40 +128,14 @@ fn main_test() {
             temp.print(&my_schema);
         }
     }
+    // my_page.append(temp);
+    // // println!("{:#?}", my_page.my_recs[0].bits);
+    // // match my_page.get_first() {
+    // //     None => println!("Empty Page!"),
+    // //     Some(x) => println!("{:#?}", x),
+    // // }
+
+    // let mut bits_bin = Vec::new();
+    // my_page.to_binary(&mut bits_bin);
+    // println!("{:#?}", bits_bin);
 }
-
-// #[test]
-// fn page_test() {
-//     // EG Input: (l_orderkey > 27) AND (l_orderkey < 45)
-
-//     // Getting Input
-//     print!("\n\nEnter in your CNF: ");
-//     io::stdout().flush().unwrap();
-//     let mut input = String::new();
-//     io::stdin()
-//         .read_line(&mut input)
-//         .expect("Can't read your CNF");
-//     // Parsing the CNF
-//     let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
-
-//     // Building the schema
-//     let catalog = Path::new("src/tpch/catalog");
-
-//     // Need to create the file so that new doesn't fail for literal
-//     let out_rec_file = File::create("sdafdsfFFDSDA").expect("Could not create record file");
-//     let out_rec_path = Path::new("sdafdsfFFDSDA");
-
-//     // Building the temp record
-//     let table_file = Path::new("src/tpch/lineitem.tbl");
-//     let mut temp = record::Record::new(table_file);
-
-//     // Building the schema
-//     let mut my_schema = schema::Schema::new();
-//     my_schema = my_schema.build(catalog, "lineitem");
-
-//     // Building Page
-//     let mut my_page = file::Page::new();
-//     temp.suck_next_record(&my_schema);
-//     my_page.append(temp);
-//     println!("{:#?}", my_page);
-// }

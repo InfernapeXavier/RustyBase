@@ -8,7 +8,7 @@ use crate::schema;
 
 #[derive(Debug)]
 pub struct Page {
-    my_recs: Vec<record::Record>,
+    pub my_recs: Vec<record::Record>,
     num_recs: usize,
     cur_size_in_bytes: usize,
 }
@@ -28,7 +28,7 @@ impl Page {
         self.cur_size_in_bytes = 0;
     }
 
-    pub fn get_first(mut self) -> Option<record::Record> {
+    pub fn get_first(&mut self) -> Option<record::Record> {
         // Check if vec is empty
         if self.my_recs.is_empty() {
             None
@@ -55,6 +55,19 @@ impl Page {
             bits.push(x.get_bits().to_vec());
         }
     }
+
+    // pub fn from_binary(&mut self, bits: &Vec<Vec<String>>) {
+    //     let num_recs = bits[0][0].parse::<i64>().unwrap();
+    //     if num_recs < 0 || num_recs > 1000_000 {
+    //         panic!(
+    //             "This is probably an error. Found {} records on a page.",
+    //             num_recs
+    //         );
+    //     }
+
+    //     self.my_recs.clear();
+    //     let temp = record::Record;
+    // }
 }
 
 #[derive(Debug, Clone)]

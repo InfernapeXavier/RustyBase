@@ -152,7 +152,6 @@ impl CNF {
     pub fn grow_from_parse_tree(
         mut self,
         mut parse_tree: AndList,
-        out_rec_file: &File,
         my_schema: &Schema,
         literal: &mut Record,
     ) -> CNF {
@@ -162,6 +161,7 @@ impl CNF {
         out_schema_file
             .write_all(b"BEGIN\ntempSchema\nwherever\n")
             .expect("Can't write to schema file");
+        let out_rec_file = File::create("sdafdsfFFDSDA").expect("Could not create record file");
 
         // Tracks the size of literal record
         let mut num_fields_in_lit: i64 = 0;
@@ -362,7 +362,7 @@ impl CNF {
         let out_rec_path = Path::new("sdafdsfFFDSDA");
         let mut out_schema: Schema = Schema::new();
         out_schema = out_schema.build(out_schema_path, "tempSchema");
-        literal.suck_next_record(&out_schema);
+        literal.suck_next_record(&out_schema, out_rec_path);
         fs::remove_file(out_schema_path).expect("Failed to remove temporary schema file");
         fs::remove_file(out_rec_path).expect("Failed to remove temporary record file");
         self

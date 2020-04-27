@@ -18,5 +18,7 @@ Cargo.lock
 # Executabless
 src/*.exe
 src/*.pdb
-src/scratch/*.exe
-src/scratch/*.pdb
+
+# Scratch Files
+src/scratch/
+src/scratch/

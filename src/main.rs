@@ -81,7 +81,7 @@ fn main_test() {
             println!("{}", counter);
         }
 
-        if comparisionengine::compare(&temp, &literal, &my_comparison) {
+        if comparisionengine::compare_unary(&temp, &literal, &my_comparison) {
             temp.print(&my_schema);
         }
     }
@@ -139,7 +139,7 @@ fn record_test() {
             println!("{}", counter);
         }
 
-        if comparisionengine::compare(&temp, &literal, &my_comparison) {
+        if comparisionengine::compare_unary(&temp, &literal, &my_comparison) {
             // temp.print(&my_schema);
         }
     }

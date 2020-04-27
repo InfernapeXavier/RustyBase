@@ -8,7 +8,7 @@ use crate::schema;
 
 #[derive(Debug)]
 pub struct Page {
-    my_recs: Vec<record::Record>,
+    pub my_recs: Vec<record::Record>,
     num_recs: usize,
     cur_size_in_bytes: usize,
 }
@@ -28,7 +28,7 @@ impl Page {
         self.cur_size_in_bytes = 0;
     }
 
-    pub fn get_first(mut self) -> Option<record::Record> {
+    pub fn get_first(&mut self) -> Option<record::Record> {
         // Check if vec is empty
         if self.my_recs.is_empty() {
             None
@@ -69,5 +69,9 @@ impl File {
             my_file_des: 0,
             curr_length: 0,
         }
+    }
+
+    pub fn get_length(self) -> usize {
+        self.curr_length
     }
 }

@@ -9,7 +9,7 @@ use crate::schema::Schema;
 
 #[derive(Debug)]
 pub struct Record {
-    bits: Vec<String>,
+    pub bits: Vec<String>,
     // Stores the value of the reader to make sure we always get the next record in order
     reader: std::io::Lines<std::io::BufReader<std::fs::File>>,
 }
@@ -30,19 +30,22 @@ impl Record {
         &self.bits
     }
     // sets the value
-    fn set_bits(&mut self, bits: Vec<String>) {
-        self.bits = bits;
+    pub fn set_bits(&mut self, bits: Vec<String>) {
+        self.bits.clear();
+        for x in bits {
+            self.bits.push(x);
+        }
     }
     // copies the bits from another record
-    fn copy_bits(&mut self, bits: Vec<String>) {
-        let temp: Vec<&str> = Vec::new();
+    pub fn copy_bits(&mut self, bits: Vec<String>) {
         self.bits = bits;
     }
     // consumes bits from another record
-    fn consume(mut self, from_me: Record) {
+    pub fn consume(mut self, from_me: Record) -> Record {
         // move occurs here and the ownership changes
         // so from_me will be purged
-        self.bits = from_me.bits
+        self.bits = from_me.bits;
+        self
     }
 
     pub fn print(&self, my_schema: &Schema) {
@@ -87,6 +90,41 @@ impl Record {
                 self.bits.push(x.to_string());
             }
             true
+        }
+    }
+
+    // This projects away various attributes...
+    // The array attsToKeep should be sorted, and lists all of the attributes that should still be in the record after Project is called.
+    pub fn project(&mut self, atts_to_keep: Vec<bool>) {
+        let mut offset: usize = 0;
+        for x in 0..atts_to_keep.len() {
+            if !atts_to_keep[x] {
+                self.bits.remove(x - offset);
+                offset += 1;
+            }
+        }
+    }
+
+    // Takes two input records and creates a new record by concatenating them;
+    // This is useful for a join operation
+    pub fn merge_records(&mut self, left: Record, right: Record, atts_to_keep: Vec<bool>) {
+        self.bits.clear();
+        let num_atts_left = left.bits.len();
+        let num_atts_right = right.bits.len();
+        if num_atts_left == 0 {
+            self.bits = right.bits;
+        } else if num_atts_right == 0 {
+            self.bits = left.bits;
+        } else {
+            for x in left.bits {
+                self.bits.push(x);
+            }
+
+            for x in right.bits {
+                self.bits.push(x);
+            }
+
+            self.project(atts_to_keep);
         }
     }
 }

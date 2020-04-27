@@ -83,7 +83,7 @@ fn main_test() {
     }
 }
 
-// #[test]
+#[test]
 fn record_test() {
     // EG Input: (l_orderkey > 27) AND (l_orderkey < 45)
     // EG Input: (l_orderkey = 33)

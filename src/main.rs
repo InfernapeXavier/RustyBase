@@ -131,6 +131,7 @@ fn record_test() {
     let mut my_schema = schema::Schema::new();
     my_schema = my_schema.build(catalog, "lineitem");
 
+    let mut my_page = file::Page::new();
     let mut counter = 0;
     while temp.suck_next_record(&my_schema) {
         counter = counter + 1;
@@ -141,16 +142,18 @@ fn record_test() {
 
         if comparisionengine::compare_unary(&temp, &literal, &my_comparison) {
             // temp.print(&my_schema);
+            my_page.append(&temp);
         }
     }
 
-    println!("\n\n{:#?}", temp.bits);
-    println!("{:#?}\n\n", literal.bits);
-    let project_list = vec![
-        true, true, true, true, true, true, true, true, true, false, false, false, false, false,
-        false, false,
-    ];
-    let mut test_record = record::Record::new(table_file);
-    test_record.merge_records(temp, literal, project_list);
-    println!("{:#?}", test_record.bits);
+    print!("{:#?}", my_page)
+    // println!("\n\n{:#?}", temp.bits);
+    // println!("{:#?}\n\n", literal.bits);
+    // let project_list = vec![
+    //     true, true, true, true, true, true, true, true, true, false, false, false, false, false,
+    //     false, false,
+    // ];
+    // let mut test_record = record::Record::new(table_file);
+    // test_record.merge_records(temp, literal, project_list);
+    // println!("{:#?}", test_record.bits);
 }

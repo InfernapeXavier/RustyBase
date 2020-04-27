@@ -6,6 +6,7 @@ use crate::record::Record;
 use crate::schema::Schema;
 
 // STD Imports for File
+use std::convert::TryInto;
 use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
@@ -100,16 +101,60 @@ pub struct OrderMaker {
     num_atts: usize,
 
     which_atts: Vec<usize>,
-    which_types: DataType,
+    which_types: Vec<DataType>,
 }
 
 impl OrderMaker {
-    pub fn new(num_atts: usize, which_atts: Vec<usize>, which_types: DataType) -> OrderMaker {
+    pub fn new(num_atts: usize, which_atts: Vec<usize>, which_types: Vec<DataType>) -> OrderMaker {
         OrderMaker {
             num_atts,
             which_atts,
             which_types,
         }
+    }
+
+    pub fn print(self) {
+        print!("Number of Atts = {:5}", self.num_atts);
+        for x in 0..self.num_atts {
+            print!("{:3}: {:5} ", x, self.which_atts[x]);
+            if self.which_types[x] == DataType::INT {
+                println!("INT");
+            } else if self.which_types[x] == DataType::DOUBLE {
+                println!("DOUBLE");
+            } else {
+                println!("STRING");
+            }
+        }
+    }
+
+    // Builds an OrderMaker that can be used to sort records based on ALL of their attributes
+    pub fn build(mut self, my_schema: &Schema) {
+        let n: usize = my_schema.get_num_atts().try_into().unwrap(); // can't index using non usize type, so need to convert
+        let atts = my_schema.get_atts();
+
+        // First for all INTs
+        for x in 0..n {
+            if atts[x].my_type == DataType::INT {
+                self.which_atts.push(x);
+                self.which_types.push(DataType::INT);
+            }
+        }
+        // Then for all DOUBLEs
+        for x in 0..n {
+            if atts[x].my_type == DataType::DOUBLE {
+                self.which_atts.push(x);
+                self.which_types.push(DataType::DOUBLE);
+            }
+        }
+        // Then for all STRINGs
+        for x in 0..n {
+            if atts[x].my_type == DataType::STRING {
+                self.which_atts.push(x);
+                self.which_types.push(DataType::STRING);
+            }
+        }
+
+        self.num_atts = self.which_atts.len();
     }
 }
 
@@ -366,6 +411,70 @@ impl CNF {
         fs::remove_file(out_schema_path).expect("Failed to remove temporary schema file");
         fs::remove_file(out_rec_path).expect("Failed to remove temporary record file");
         self
+    }
+
+    pub fn get_sort_order(self, left: &mut OrderMaker, right: &mut OrderMaker) -> usize {
+        // Looping through all disjunctions in the CNG to find those that are acceptable for use in a sort ordering
+        for x in 0..self.num_ands {
+            // If there's no disjunction of length one then it can't be used
+            if self.or_lens[x] != 1 {
+                continue;
+            }
+
+            // Check for equality
+            if self.or_list[x][0].op != CompOperator::Equals {
+                continue;
+            }
+
+            // Verify that it operates over attributes from both tables
+            if !((self.or_list[x][0].operand_one == Target::Left
+                && self.or_list[x][0].operand_two == Target::Right)
+                || (self.or_list[x][0].operand_two == Target::Left
+                    && self.or_list[x][0].operand_one == Target::Right))
+            {
+                continue;
+            }
+
+            // If we reach here, we have a join attribute!
+            // Now we need to add the comparison information into the relevant structure
+            match self.or_list[x][0].operand_one {
+                Target::Left => {
+                    left.which_atts
+                        .push(self.or_list[x][0].which_att_one.try_into().unwrap());
+                    left.which_types.push(self.or_list[x][0].att_type);
+                }
+
+                Target::Right => {
+                    right
+                        .which_atts
+                        .push(self.or_list[x][0].which_att_one.try_into().unwrap());
+                    right.which_types.push(self.or_list[x][0].att_type);
+                }
+
+                _ => panic!("Something went wrong while creating the sort order!"),
+            }
+            match self.or_list[x][0].operand_two {
+                Target::Left => {
+                    left.which_atts
+                        .push(self.or_list[x][0].which_att_two.try_into().unwrap());
+                    left.which_types.push(self.or_list[x][0].att_type);
+                }
+
+                Target::Right => {
+                    right
+                        .which_atts
+                        .push(self.or_list[x][0].which_att_two.try_into().unwrap());
+                    right.which_types.push(self.or_list[x][0].att_type);
+                }
+
+                _ => panic!("Something went wrong while creating the sort order!"),
+            }
+        }
+
+        // Set number of attributes for both OrderMakers
+        left.num_atts = left.which_atts.len();
+        right.num_atts = right.which_atts.len();
+        left.num_atts
     }
 }
 

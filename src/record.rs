@@ -49,7 +49,7 @@ impl Record {
     }
 
     pub fn print(&self, my_schema: &Schema) {
-        let n: usize = my_schema.get_num_atts().try_into().unwrap();
+        let n: usize = my_schema.get_num_atts().try_into().unwrap(); // can't index using non usize type, so need to convert
         let atts = my_schema.get_atts();
         for x in 0..n {
             print!("{}: [", atts[x].name);

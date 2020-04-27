@@ -58,8 +58,12 @@ fn main_test() {
 
     // Building the CNF
     let mut my_comparison = comparison::CNF::new();
-    my_comparison =
-        my_comparison.grow_from_parse_tree(expression, &out_rec_file, &lineitem, &mut literal);
+    my_comparison = my_comparison.grow_from_parse_tree_single(
+        expression,
+        &out_rec_file,
+        &lineitem,
+        &mut literal,
+    );
 
     // Building the temp record
     let table_file = Path::new("src/tpch/lineitem.tbl");

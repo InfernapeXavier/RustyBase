@@ -44,7 +44,7 @@ impl Page {
             false
         } else {
             self.my_recs.push(add_me);
-            self.num_recs = self.num_recs + 1;
+            self.num_recs += 1;
             true
         }
     }

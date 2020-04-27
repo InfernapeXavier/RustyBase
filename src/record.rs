@@ -65,8 +65,7 @@ impl Record {
                 print!("{}], ", value);
             }
         }
-        // println!("{:#?}", self.bits);
-        println!("");
+        println!();
     }
     // reads the next record and returns false when there's no more data
     pub fn suck_next_record(&mut self, my_schema: &Schema) -> bool {

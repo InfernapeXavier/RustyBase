@@ -239,9 +239,8 @@ impl CNF {
                             operand_one = Target::Left;
                             which_att_one = left_schema.find(&my_or.left.left.value);
                             type_left = left_schema.find_type(&my_or.left.left.value);
-                        } else
-                        //Try to find in the right schema
-                        if left_schema.find(&my_or.left.left.value) != 1 {
+                        } else if left_schema.find(&my_or.left.left.value) != 1 {
+                            //Try to find in the right schema
                             operand_one = Target::Right;
                             which_att_one = right_schema.find(&my_or.left.left.value);
                             type_left = right_schema.find_type(&my_or.left.left.value);
@@ -305,9 +304,8 @@ impl CNF {
                             operand_two = Target::Left;
                             which_att_two = left_schema.find(&my_or.left.right.value);
                             type_right = left_schema.find_type(&my_or.left.right.value);
-                        } else
-                        // Check if it's in the right schema
-                        if right_schema.find(&my_or.left.right.value) != 1 {
+                        } else if right_schema.find(&my_or.left.right.value) != 1 {
+                            // Check if it's in the right schema
                             operand_two = Target::Right;
                             which_att_two = left_schema.find(&my_or.left.right.value);
                             type_right = left_schema.find_type(&my_or.left.right.value);
@@ -394,7 +392,7 @@ impl CNF {
                 );
                 comparisons.push(temp_comparison);
 
-                which_or = which_or + 1;
+                which_or += 1;
                 my_or = match my_or.right_or {
                     None => {
                         self.or_lens.push(which_or);
@@ -404,7 +402,7 @@ impl CNF {
                 }
             }
             self.or_list.push(comparisons);
-            which_and = which_and + 1;
+            which_and += 1;
             parse_tree = match parse_tree.right_and {
                 None => {
                     self.num_ands = which_and;
@@ -615,7 +613,7 @@ impl CNF {
                 );
                 comparisons.push(temp_comparison);
 
-                which_or = which_or + 1;
+                which_or += 1;
                 my_or = match my_or.right_or {
                     None => {
                         self.or_lens.push(which_or);
@@ -625,7 +623,7 @@ impl CNF {
                 }
             }
             self.or_list.push(comparisons);
-            which_and = which_and + 1;
+            which_and += 1;
             parse_tree = match parse_tree.right_and {
                 None => {
                     self.num_ands = which_and;
@@ -718,7 +716,7 @@ fn add_lit_to_file(
     num_fields_in_lit: i64,
     mut out_rec_file: &File,
     mut out_schema_file: &File,
-    value: &String,
+    value: &str,
     my_type: DataType,
 ) -> i64 {
     out_rec_file

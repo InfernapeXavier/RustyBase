@@ -98,10 +98,9 @@ impl Comparison {
 // This encapsulates the sort order for records
 #[derive(Debug, Clone)]
 pub struct OrderMaker {
-    num_atts: usize,
-
-    which_atts: Vec<usize>,
-    which_types: Vec<DataType>,
+    pub num_atts: usize,
+    pub which_atts: Vec<usize>,
+    pub which_types: Vec<DataType>,
 }
 
 impl OrderMaker {

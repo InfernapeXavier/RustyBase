@@ -2,9 +2,112 @@
 use std::convert::TryInto;
 
 // Custom Imports
-use crate::comparison::{Comparison, CNF};
+use crate::comparison::{Comparison, OrderMaker, CNF};
 use crate::defs::{CompOperator, DataType, Target};
 use crate::record::Record;
+
+// This version of Compare is for sorting. The OrderMaker struct encapsulates the specification for a sort order.
+// For example, say you are joining two tables on R.att1 = S.att2, and so you want to sort R using att1.
+// The OrderMaker struct specifies this sort ordering on att1.
+// Compare returns a negative number, 0, or a positive number if left is less than, equal to, or greater than right.
+// This particular version of Compare is used when both of the records come from the SAME RELATION
+
+pub fn compare_sort_same(left: &Record, right: &Record, order_us: &OrderMaker) -> i64 {
+    let left_bits = left.get_bits();
+    let right_bits = right.get_bits();
+    let mut val_one;
+    let mut val_two;
+
+    for x in 0..order_us.num_atts {
+        let index: usize = (order_us.which_atts[x]).try_into().unwrap();
+        val_one = &left_bits[index];
+        val_two = &right_bits[index];
+
+        // Check the type and do the comparison
+        match order_us.which_types[x] {
+            DataType::INT => {
+                let int_one = val_one.parse::<i64>().unwrap();
+                let int_two = val_two.parse::<i64>().unwrap();
+                if int_one < int_two {
+                    return -1;
+                } else if int_one > int_two {
+                    return 1;
+                }
+            }
+            DataType::DOUBLE => {
+                let double_one = val_one.parse::<f64>().unwrap();
+                let double_two = val_two.parse::<f64>().unwrap();
+                if double_one < double_two {
+                    return -1;
+                } else if double_one > double_two {
+                    return 1;
+                }
+            }
+            DataType::STRING => {
+                if val_one < val_two {
+                    return -1;
+                } else if val_one > val_two {
+                    return 1;
+                }
+            }
+        }
+    }
+    0
+}
+
+// Similar to the last function, except that this one works in the
+// case where the two records come from different input relations.
+// It is used to do sorts for a sort-merge join
+
+pub fn compare_sort_different(
+    left: &Record,
+    order_left: &OrderMaker,
+    right: &Record,
+    order_right: &OrderMaker,
+) -> i64 {
+    let left_bits = left.get_bits();
+    let right_bits = right.get_bits();
+    let mut val_one;
+    let mut val_two;
+
+    for x in 0..order_left.num_atts {
+        let index_left: usize = (order_left.which_atts[x]).try_into().unwrap();
+        let index_right: usize = (order_right.which_atts[x]).try_into().unwrap();
+
+        val_one = &left_bits[index_left];
+        val_two = &right_bits[index_right];
+
+        // Check the type and do the comparison
+        match order_left.which_types[x] {
+            DataType::INT => {
+                let int_one = val_one.parse::<i64>().unwrap();
+                let int_two = val_two.parse::<i64>().unwrap();
+                if int_one < int_two {
+                    return -1;
+                } else if int_one > int_two {
+                    return 1;
+                }
+            }
+            DataType::DOUBLE => {
+                let double_one = val_one.parse::<f64>().unwrap();
+                let double_two = val_two.parse::<f64>().unwrap();
+                if double_one < double_two {
+                    return -1;
+                } else if double_one > double_two {
+                    return 1;
+                }
+            }
+            DataType::STRING => {
+                if val_one < val_two {
+                    return -1;
+                } else if val_one > val_two {
+                    return 1;
+                }
+            }
+        }
+    }
+    0
+}
 
 // Applies the given CNF to a single record and accepts or rejects the record
 // This version is for unary operations

@@ -192,6 +192,8 @@ impl CNF {
         }
     }
 
+    // This takes a parse tree for a CNF and converts it into a 2-D matrix
+    // This version is applicable to selections over a single relation
     pub fn grow_from_parse_tree_two(
         mut self,
         mut parse_tree: AndList,

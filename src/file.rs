@@ -1,7 +1,10 @@
 // STD Imports
 use std::collections::LinkedList;
+use std::convert::TryInto;
 use std::fs;
+use std::fs::OpenOptions;
 use std::io::prelude::*;
+use std::io::SeekFrom;
 use std::io::{BufRead, BufReader};
 use std::mem;
 use std::path::Path;
@@ -131,5 +134,103 @@ impl File {
 
     pub fn get_length(self) -> usize {
         self.curr_length
+    }
+
+    pub fn add_page(
+        &mut self,
+        add_me: &Page,
+        mut which_page: usize,
+        file_des: &Path,
+        file_len: usize,
+    ) {
+        which_page += 1;
+        let file = open(file_len, file_des);
+        let mut file = match file {
+            Ok(o) => o,
+            Err(e) => panic!("Could not open the file specified!"),
+        };
+
+        if which_page >= self.curr_length {
+            for x in self.curr_length..which_page {
+                let temp: u8 = 0;
+                match file.seek(SeekFrom::Start((defs::PAGE_SIZE * x).try_into().unwrap())) {
+                    Err(e) => panic!("Error in seeking to the required position!"),
+                    Ok(o) => {
+                        for x in 0..defs::PAGE_SIZE {
+                            file.write(format!("{}", temp).as_bytes())
+                                .expect("Unable to write to temp file");
+                        }
+                    }
+                }
+            }
+
+            self.curr_length = which_page + 1;
+        }
+
+        let mut bits = Vec::new();
+        add_me.to_binary(&mut bits);
+        match file.seek(SeekFrom::Start(
+            (defs::PAGE_SIZE * which_page).try_into().unwrap(),
+        )) {
+            Err(e) => panic!("Error in seeking to the required position!"),
+            Ok(o) => {
+                for x in bits {
+                    for y in x {
+                        file.write(format!("{}|", y).as_bytes())
+                            .expect("Could not Write to file!");
+                    }
+                    file.write(b"\n").expect("Could not Write to file!");
+                }
+            }
+        }
+    }
+
+    pub fn get_page(&mut self, add_here: &mut Page, mut which_page: usize, file_des: &Path) {
+        which_page += 1;
+        let file = open(1, file_des);
+        let mut file = match file {
+            Ok(o) => o,
+            Err(e) => panic!("Could not open the file specified!"),
+        };
+
+        if which_page >= self.curr_length {
+            panic!(
+                "which_page: {}, length: {} \n BAD: You tried to read past the end of file\n",
+                which_page, self.curr_length
+            );
+        }
+
+        let mut bits = Vec::new();
+        match file.seek(SeekFrom::Start(
+            (defs::PAGE_SIZE * which_page).try_into().unwrap(),
+        )) {
+            Err(e) => panic!("Error in seeking to the required position!"),
+            Ok(o) => {
+                let reader = BufReader::new(file);
+                for line in reader.lines() {
+                    let line = line.expect("Unable to read from file");
+                    let mut vec: Vec<&str> = line.split('|').collect();
+                    vec.pop();
+                    let mut new_vec = Vec::new();
+                    for x in vec {
+                        new_vec.push(x.to_string());
+                    }
+                    bits.push(new_vec);
+                }
+
+                add_here.from_binary(bits);
+            }
+        }
+    }
+}
+
+pub fn open(file_len: usize, file_des: &Path) -> Result<std::fs::File, std::io::Error> {
+    if file_len == 0 {
+        fs::File::create(file_des).expect("Could not create temp file for page");
+        let file = OpenOptions::new().append(true).open(file_des);
+        file
+    } else {
+        let file = OpenOptions::new().append(true).read(true).open(file_des);
+        file
     }
 }

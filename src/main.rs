@@ -8,7 +8,7 @@
 extern crate lalrpop_util;
 
 // STD Imports
-use std::fs::File;
+use std::fs;
 use std::io;
 use std::io::prelude::*;
 use std::path::Path;
@@ -50,7 +50,7 @@ fn main_test() {
     lineitem = lineitem.build(catalog, "lineitem");
 
     // Need to create the file so that new doesn't fail for literal
-    let out_rec_file = File::create("sdafdsfFFDSDA").expect("Could not create record file");
+    let out_rec_file = fs::File::create("sdafdsfFFDSDA").expect("Could not create record file");
     let out_rec_path = Path::new("sdafdsfFFDSDA");
 
     // Building the literal record
@@ -109,7 +109,7 @@ fn page_test() {
     lineitem = lineitem.build(catalog, "lineitem");
 
     // Need to create the file so that new doesn't fail for literal
-    let out_rec_file = File::create("sdafdsfFFDSDA").expect("Could not create record file");
+    let out_rec_file = fs::File::create("sdafdsfFFDSDA").expect("Could not create record file");
     let out_rec_path = Path::new("sdafdsfFFDSDA");
 
     // Building the literal record
@@ -147,13 +147,24 @@ fn page_test() {
         }
     }
 
-    print!("{:#?}", my_page);
+    // print!("{:#?}", my_page);
     let mut bin = Vec::new();
     my_page.to_binary(&mut bin);
-    print!("{:#?}", bin);
+    // print!("{:#?}", bin);
     let mut test_page = file::Page::new();
     test_page.from_binary(bin);
-    println!("{:#?}", test_page);
+    // println!("{:#?}", test_page);
+
+    // File test
+    let mut test_file = file::File::new();
+    let temp_page = Path::new("tempFile");
+    test_file.add_page(&test_page, 7, temp_page, 0);
+    let mut test_page2 = file::Page::new();
+    // println!("{:#?}", test_file);
+    test_file.get_page(&mut test_page2, 7, temp_page);
+    println!("{:#?}", test_page2);
+    fs::remove_file(temp_page).expect("Unable to remove temp file");
+
     // println!("\n\n{:#?}", temp.bits);
     // println!("{:#?}\n\n", literal.bits);
     // let project_list = vec![

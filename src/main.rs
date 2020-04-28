@@ -278,16 +278,6 @@ fn cnf_test() {
 
 #[test]
 fn parser_test() {
-    print!("\n\nEnter in your CNF: ");
-    io::stdout().flush().unwrap();
-    let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Can't read your CNF");
-    // Parsing the CNF
-    let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
-    println!("{:#?}", expression);
-
     print!("\n\nEnter in your Expression: ");
     io::stdout().flush().unwrap();
     let mut input = String::new();

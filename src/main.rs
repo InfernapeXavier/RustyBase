@@ -234,3 +234,43 @@ fn record_test() {
     test_record.merge_records(temp, literal, project_list);
     println!("{:#?}", test_record.bits);
 }
+
+#[test]
+fn cnf_test() {
+    // This test just checks the methods that a record has
+    // EG Input: (l_orderkey > 27) AND (l_orderkey < 45)
+    // EG Input: (l_orderkey = 33)
+
+    // Getting Input
+    print!("\n\nEnter in your CNF: ");
+    io::stdout().flush().unwrap();
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Can't read your CNF");
+    // Parsing the CNF
+    let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
+    println!("The parsed expression is: {:#?}", expression);
+
+    // Building the schema
+    let catalog = Path::new("src/tpch/catalog");
+    let mut lineitem = schema::Schema::new();
+    lineitem = lineitem.build(catalog, "lineitem");
+
+    // Need to create the file so that new doesn't fail for literal
+    let out_rec_file = fs::File::create("sdafdsfFFDSDA").expect("Could not create record file");
+    let out_rec_path = Path::new("sdafdsfFFDSDA");
+
+    // Building the literal record
+    let mut literal = record::Record::new(out_rec_path);
+
+    // Building the CNF
+    let mut my_comparison = comparison::CNF::new();
+    my_comparison = my_comparison.grow_from_parse_tree_single(
+        expression,
+        &out_rec_file,
+        &lineitem,
+        &mut literal,
+    );
+    println!("The final CNF looks like this: {:#?}", my_comparison);
+}

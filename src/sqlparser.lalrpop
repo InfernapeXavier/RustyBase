@@ -1,18 +1,33 @@
 use std::str::FromStr;
 use crate::parsedefs;
-use crate::parsedefs::{Operand, ComparisonOp, OrList, AndList, FuncOperand, FuncOperator};
+use crate::parsedefs::{Operand, ComparisonOp, OrList, AndList, FuncOperand, FuncOperator, NameList, TableList};
 grammar;
 
 match {
+    "SELECT",
+    "FROM",
+    "WHERE",
+    "SUM",
+    "AND",
+    "GROUP",
+    "DISTINCT",
+    "BY",
+    "OR",
+    "AS",
+    "(",
+    "<",
+    ">",
+    "=",
+    ")",
     "+",
     "-",
     "/",
     "*",
-    "(",
-    ")",
+    ",",
     r"[0-9]+", // Int
     r"[0-9]+\.[0-9]*", // Float
-    r"[A-Za-z][\.A-Za-z0-9_-]*", // Name
+    r"[A-Za-z][A-Za-z0-9_-]*", // Name 
+    r"[A-Za-z][A-Za-z0-9_-]*\.[A-Za-z][A-Za-z0-9_-]*", // Name
     r"'[^\n]*'", // String
 
 
@@ -22,8 +37,19 @@ match {
     r"/\*([^\*]*\*+[^\*/])*([^\*]*\*+|[^\*])*\*/" => { }, // `/* comment */`
 }
 
-// Returns the final ParseTree via ParseTreeParser
-pub CompoundExp: FuncOperator = {
+pub Atts: NameList = {
+    NAME => NameList::new(<>, None),
+    <n:Atts> "," <al:NAME> => NameList::new(al, Some(Box::new(n))),
+}
+
+Tables: TableList = {
+    <og:NAME> "AS" <al:NAME> => TableList::new(og, al, None),
+    <n:Tables> "," <og:NAME> "AS" <al:NAME> => TableList::new(of, al, Some(Box::new(n))),
+}
+
+
+// Functional Parsing
+CompoundExp: FuncOperator = {
     <l:SimpleExp> <m:Op> <r:CompoundExp> => {
         let add = String::from("+");
         let sub = String::from("-");
@@ -94,9 +120,73 @@ SimpleExp: FuncOperand = {
     },
 };
 
+
+// Boolean Parsing
+// Returns the final ParseTree via ParseTreeParser
+ParseTree: AndList = {
+    "(" <o:OrList> ")" AND <a:ParseTree> => {
+        AndList::new(Box::new(o), Some(Box::new(a)))
+    },
+
+    "(" <o:OrList> ")" => {
+        AndList::new(Box::new(o), None)
+    }
+};
+
+// Returns OrList
+OrList: OrList = {
+    <l:Condition> OR <r:OrList> => {
+        OrList::new(l,Some(Box::new(r)))
+    },
+    
+    Condition => {
+        OrList::new(<>, None)
+    }
+}
+
+// Returns ComparisonOp built with the Operator, Left Operand and Right Operand
+Condition: ComparisonOp = {
+    <l:Literal> "<" <r:Literal> => {
+        ComparisonOp::new(parsedefs::LESS_THAN,l,r)
+    },
+
+    <l:Literal> ">" <r:Literal> => {
+        ComparisonOp::new(parsedefs::GREATER_THAN,l,r)
+    },
+
+    <l:Literal> "=" <r:Literal> => {
+        ComparisonOp::new(parsedefs::EQUALS,l,r)
+    },
+
+    Literal => {
+        let lit_one = <>;
+        let lit_two = lit_one.clone();
+        ComparisonOp::new(parsedefs::EQUALS, lit_one, lit_two)
+    }
+};
+
+// Returns Operand built with the DataType and the input value
+Literal: Operand = {
+    INT => {
+        Operand::new(parsedefs::INT, <>)
+    },
+
+    DOUBLE => {
+        Operand::new(parsedefs::DOUBLE, <>)
+    },
+
+    STRING => {
+       Operand::new(parsedefs::STRING, <>)
+    },
+
+    NAME => {
+        Operand::new(parsedefs::NAME, <>)
+    }
+};
+
 INT: String = {
     r"[0-9]+" => (<>).to_string(), // returns number as string
-};
+}
 
 DOUBLE: String = {
     r"[0-9]+\.[0-9]*" => (<>).to_string(), // returns number as string
@@ -110,8 +200,17 @@ STRING: String = {
         let final_slice = &slice.replace("\\", ""); // handles "'" in strings
         final_slice.to_string()
     }
-};
+}
 
 NAME: String = {
-    r"[A-Za-z][\.A-Za-z0-9_-]*" => (<>).to_string(), //returns string when it is a name
-};
+    r"[A-Za-z][A-Za-z0-9_-]*" => (<>).to_string(), //returns string when it is a name
+    r"[A-Za-z][A-Za-z0-9_-]*\.[A-Za-z][A-Za-z0-9_-]*" => (<>).to_string(), //returns string when it is a name
+}
+
+OR: String = {
+    "OR" => (<>).to_string(), //returns string OR
+}
+
+AND: String = {
+    "AND" => (<>).to_string(), //returns string AND
+}

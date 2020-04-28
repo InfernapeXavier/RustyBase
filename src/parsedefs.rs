@@ -1,9 +1,13 @@
 // Derive Debug allows for Pretty Printing for Debugging
 // Derive Clone allows implements a Clone method
 
+// Used in boolean expressions... there's no reason to have both this
+// and FuncOperand, but both are here for legacy reasons!!
 #[derive(Debug, Clone)]
 pub struct Operand {
+    // Type of the operand: FLOAT, INT, STRING...
     pub code: usize,
+    // Actual operand
     pub value: String,
 }
 
@@ -15,7 +19,10 @@ impl Operand {
 
 #[derive(Debug, Clone)]
 pub struct ComparisonOp {
+    // Corresponds to one of the codes describing what type
+    // of literal value we have in this node: LESS_THAN, EQUALS...
     pub code: usize,
+    // The operands
     pub left: Operand,
     pub right: Operand,
 }
@@ -29,7 +36,10 @@ impl ComparisonOp {
 //  For self-referential values, Box Pointer is required. They are dereferenced to get the value in them
 #[derive(Debug, Clone)]
 pub struct OrList {
+    // Comparison to the left of the OR
     pub left: ComparisonOp,
+    // OrList to the right of the OR; again,
+    // This might be NULL if the right is a simple comparison
     pub right_or: Option<Box<OrList>>,
 }
 
@@ -42,6 +52,8 @@ impl OrList {
 #[derive(Debug, Clone)]
 pub struct AndList {
     pub left: Box<OrList>,
+    // AndList to the right of the AND
+    // This can be NULL if the right is a disjunction
     pub right_and: Option<Box<AndList>>,
 }
 
@@ -83,6 +95,77 @@ impl FuncOperator {
             left_operator,
             left_operand,
             right,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct TableList {
+    // Original Table Name
+    pub table_name: String,
+
+    // Alias of the table
+    pub alias_as: String,
+
+    // Next alias
+    pub next: Option<Box<TableList>>,
+}
+
+impl TableList {
+    pub fn new(table_name: String, alias_as: String, next: Option<Box<TableList>>) -> TableList {
+        TableList {
+            table_name,
+            alias_as,
+            next,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct NameList {
+    // Name
+    pub name: String,
+
+    // Next in list
+    pub next: Option<Box<NameList>>,
+}
+
+impl NameList {
+    pub fn new(name: String, next: Option<Box<NameList>>) -> NameList {
+        NameList { name, next }
+    }
+}
+
+// This holds the final structure for the SQL parser
+#[derive(Debug, Clone)]
+pub struct Final {
+    final_function: FuncOperator, // the aggregate function (NULL if no agg)
+    tables: TableList,            // the list of tables and aliases in the query
+    and_list: bool,               // the predicate in the WHERE clause
+    grouping_atts: NameList,      // grouping atts (NULL if no grouping)
+    atts_to_select: NameList,     // the set of attributes in the SELECT (NULL if no such atts)
+    distinct_atts: i64,           // 1 if there is a DISTINCT in a non-aggregate query
+    distinct_func: i64,           // 1 if there is a DISTINCT in an aggregate query
+}
+
+impl Final {
+    pub fn new(
+        final_function: FuncOperator,
+        tables: TableList,
+        and_list: bool,
+        grouping_atts: NameList,
+        atts_to_select: NameList,
+        distinct_atts: i64,
+        distinct_func: i64,
+    ) -> Final {
+        Final {
+            final_function,
+            tables,
+            and_list,
+            grouping_atts,
+            atts_to_select,
+            distinct_atts,
+            distinct_func,
         }
     }
 }

@@ -27,37 +27,46 @@ match {
 // Returns the final ParseTree via ParseTreeParser
 pub CompoundExp: FuncOperator = {
     <l:SimpleExp> <m:Op> <r:CompoundExp> => {
+        let add = String::from("+");
+        let sub = String::from("-");
+        let mul = String::from("*");
+        let div = String::from("/");
+
         let code = match m {
-            "+" => parsedefs::ADD,
-            "-" => parsedefs::SUB,
-            "*" => parsedefs::MUL,
-            "/" => parsedefs::DIV,
-        }
-        let left_operator = FuncOperator::new(m, None, Some(Box::new(l)), None);
-        operator.left_operator = None;
-        operator.left_operand = Some(l);
-        operator.right = None;
+            a if a == add => parsedefs::ADD,
+            a if a == sub => parsedefs::SUB,
+            a if a == mul => parsedefs::MUL,
+            a if a == div => parsedefs::DIV,
+            _ => panic!("Error Parsing Expression"),
+        };
+        let left_operator = FuncOperator::new(code, None, Some(Box::new(l)), None);
         FuncOperator::new(code, Some(Box::new(left_operator)), None, Some(Box::new(r)))
     },
 
     "(" <l:CompoundExp> ")" <m:Op > <r:CompoundExp> => {
+        let add = String::from("+");
+        let sub = String::from("-");
+        let mul = String::from("*");
+        let div = String::from("/");
+
         let code = match m {
-            "+" => parsedefs::ADD,
-            "-" => parsedefs::SUB,
-            "*" => parsedefs::MUL,
-            "/" => parsedefs::DIV,
-        }
+            a if a == add => parsedefs::ADD,
+            a if a == sub => parsedefs::SUB,
+            a if a == mul => parsedefs::MUL,
+            a if a == div => parsedefs::DIV,
+            _ => panic!("Error Parsing Expression"),
+        };
         FuncOperator::new(code, Some(Box::new(l)), None, Some(Box::new(r)))
     },
 
-    "(" CompoundExp ")" => <>,
+    "(" <o:CompoundExp> ")" => o,
 
     SimpleExp => {
         FuncOperator::new(0, None, Some(Box::new(<>)), None)
     },
 
-    "-" CompoundExp => {
-        FuncOperator::new(parsedefs::SUB, Some(Box::new(<>)), None, None)
+    "-" <o:CompoundExp> => {
+        FuncOperator::new(parsedefs::SUB, Some(Box::new(o)), None, None)
     }
 
 
@@ -67,7 +76,7 @@ Op: String = {
     "-" => (<>).to_string(),
     "+" => (<>).to_string(),
     "/" => (<>).to_string(),
-    "*" => (<>).to_string()
+    "*" => (<>).to_string(),
 };
 
 // Returns Operand built with the DataType and the input value
@@ -86,12 +95,12 @@ SimpleExp: FuncOperand = {
 
     NAME => {
         FuncOperand::new(parsedefs::NAME, <>)
-    }
+    },
 };
 
 INT: String = {
     r"[0-9]+" => (<>).to_string(), // returns number as string
-}
+};
 
 DOUBLE: String = {
     r"[0-9]+\.[0-9]*" => (<>).to_string(), // returns number as string
@@ -105,8 +114,8 @@ STRING: String = {
         let final_slice = &slice.replace("\\", ""); // handles "'" in strings
         final_slice.to_string()
     }
-}
+};
 
 NAME: String = {
     r"[A-Za-z][\.A-Za-z0-9_-]*" => (<>).to_string(), //returns string when it is a name
-}
+};

@@ -143,27 +143,15 @@ impl Schema {
         self
     }
 
+    // Build schema from a list of attributes
     pub fn build_from_atts(mut self, file_name: &str, num_atts: i64, atts: Vec<Attribute>) {
         self.file_name = file_name.to_string();
         self.num_atts = num_atts;
         self.my_atts = Vec::new();
 
         for x in atts {
-            match x.my_type {
-                DataType::INT => {
-                    let temp_att = Attribute::init(x.name, x.my_type);
-                    self.my_atts.push(temp_att);
-                }
-                DataType::DOUBLE => {
-                    let temp_att = Attribute::init(x.name, x.my_type);
-                    self.my_atts.push(temp_att);
-                }
-                DataType::STRING => {
-                    let temp_att = Attribute::init(x.name, x.my_type);
-                    self.my_atts.push(temp_att);
-                }
-                _ => panic!("Bad attribute type found {:#?}\n", x.my_type),
-            }
+            let temp_att = Attribute::init(x.name, x.my_type);
+            self.my_atts.push(temp_att);
         }
     }
 }

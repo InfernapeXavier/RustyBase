@@ -139,33 +139,25 @@ impl NameList {
 // This holds the final structure for the SQL parser
 #[derive(Debug, Clone)]
 pub struct Final {
-    final_function: FuncOperator, // the aggregate function (NULL if no agg)
-    tables: TableList,            // the list of tables and aliases in the query
-    and_list: bool,               // the predicate in the WHERE clause
-    grouping_atts: NameList,      // grouping atts (NULL if no grouping)
-    atts_to_select: NameList,     // the set of attributes in the SELECT (NULL if no such atts)
-    distinct_atts: i64,           // 1 if there is a DISTINCT in a non-aggregate query
-    distinct_func: i64,           // 1 if there is a DISTINCT in an aggregate query
+    pub final_function: Option<FuncOperator>, // the aggregate function (NULL if no agg)
+    pub tables: Option<TableList>,            // the list of tables and aliases in the query
+    pub boolean: Option<AndList>,             // the predicate in the WHERE clause
+    pub grouping_atts: Option<NameList>,      // grouping atts (NULL if no grouping)
+    pub atts_to_select: Option<NameList>, // the set of attributes in the SELECT (NULL if no such atts)
+    pub distinct_atts: bool,              // 1 if there is a DISTINCT in a non-aggregate query
+    pub distinct_func: bool,              // 1 if there is a DISTINCT in an aggregate query
 }
 
 impl Final {
-    pub fn new(
-        final_function: FuncOperator,
-        tables: TableList,
-        and_list: bool,
-        grouping_atts: NameList,
-        atts_to_select: NameList,
-        distinct_atts: i64,
-        distinct_func: i64,
-    ) -> Final {
+    pub fn new() -> Final {
         Final {
-            final_function,
-            tables,
-            and_list,
-            grouping_atts,
-            atts_to_select,
-            distinct_atts,
-            distinct_func,
+            final_function: None,
+            tables: None,
+            boolean: None,
+            grouping_atts: None,
+            atts_to_select: None,
+            distinct_atts: false,
+            distinct_func: false,
         }
     }
 }

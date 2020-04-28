@@ -25,6 +25,7 @@ mod schema;
 // Defining LALRPOP Parser to parse inputs
 lalrpop_mod!(pub parser);
 lalrpop_mod!(pub parserfunc);
+lalrpop_mod!(pub sqlparser);
 
 fn main() {
     println!("\n\nExecuted Main.........");
@@ -286,5 +287,20 @@ fn parser_test() {
         .expect("Can't read your CNF");
     // Parsing the CNF
     let expression = parserfunc::CompoundExpParser::new().parse(&input).unwrap();
+    println!("{:#?}", expression);
+}
+
+#[test]
+fn sql_test() {
+    // print!("\n\nEnter in your Expression: ");
+    // io::stdout().flush().unwrap();
+    let input = String::from(
+        "SELECT SUM DISTINCT (a.b + b), d.g FROM a AS b WHERE ('foo' > this.that OR 2 = 3) AND (12 > 5) GROUP BY a.f, c.d, g.f",
+    );
+    // io::stdin()
+    //     .read_line(&mut input)
+    //     .expect("Can't read your CNF");
+    // Parsing the CNF
+    let expression = sqlparser::SQLParser::new().parse(&input).unwrap();
     println!("{:#?}", expression);
 }

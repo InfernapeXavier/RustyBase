@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use crate::parsedefs;
-use crate::parsedefs::{Operand, ComparisonOp, OrList, AndList, FuncOperand, FuncOperator, NameList, TableList};
-grammar;
+use crate::parsedefs::{Operand, ComparisonOp, OrList, AndList, FuncOperand, FuncOperator, NameList, TableList, Final};
+grammar();
 
 match {
     "SELECT",
@@ -37,14 +37,63 @@ match {
     r"/\*([^\*]*\*+[^\*/])*([^\*]*\*+|[^\*])*\*/" => { }, // `/* comment */`
 }
 
-pub Atts: NameList = {
+pub SQL: Final = {
+    SELECT <w:WhatIWant> FROM <t:Tables> WHERE <a:ParseTree> => {
+        let mut final_val = w;
+        final_val.tables = Some(t);
+        final_val.boolean = Some(a);
+        final_val
+    },
+
+    SELECT <w:WhatIWant> FROM <t:Tables> WHERE <a:ParseTree> GROUP BY <att:Atts> => {
+        let mut final_val = w;
+        final_val.tables = Some(t);
+        final_val.boolean = Some(a);
+        final_val.grouping_atts = Some(att);
+        final_val
+    }
+}
+
+WhatIWant: Final = {
+    <f:Function> "," <a:Atts> => {
+        let mut final_val = Final::new();
+        final_val.final_function = f.1;
+        final_val.atts_to_select = Some(a);
+        final_val.distinct_func = f.0;
+        final_val
+    },
+    Function => {
+        let mut final_val = Final::new();
+        final_val.final_function = <>.1;
+        final_val.distinct_func = <>.0;
+        final_val
+    },
+    Atts => {
+        let mut final_val = Final::new();
+        final_val.atts_to_select = Some(<>);
+        final_val
+    },
+    DISTINCT <a:Atts> => {
+        let mut final_val = Final::new();
+        final_val.atts_to_select = Some(a);
+        final_val.distinct_atts = true;
+        final_val
+    }
+}
+
+Function: (bool, Option<FuncOperator>) = {
+    SUM "(" <exp:CompoundExp> ")" => (false, Some(exp)),
+    SUM DISTINCT "(" <exp:CompoundExp> ")" => (true, Some(exp)),
+}
+
+Atts: NameList = {
     NAME => NameList::new(<>, None),
     <n:Atts> "," <al:NAME> => NameList::new(al, Some(Box::new(n))),
 }
 
 Tables: TableList = {
-    <og:NAME> "AS" <al:NAME> => TableList::new(og, al, None),
-    <n:Tables> "," <og:NAME> "AS" <al:NAME> => TableList::new(of, al, Some(Box::new(n))),
+    <og:NAME> AS <al:NAME> => TableList::new(og, al, None),
+    <n:Tables> "," <og:NAME> AS <al:NAME> => TableList::new(og, al, Some(Box::new(n))),
 }
 
 
@@ -184,6 +233,49 @@ Literal: Operand = {
     }
 };
 
+
+// SQL Keywords
+SELECT: String = {
+    "SELECT" => (<>).to_string(),
+}
+
+FROM: String = {
+    "FROM" => (<>).to_string(),
+}
+
+WHERE: String = {
+    "WHERE" => (<>).to_string(),
+}
+
+SUM: String = {
+    "SUM" => (<>).to_string(),
+}
+
+AND: String = {
+    "AND" => (<>).to_string(), 
+}
+
+GROUP: String = {
+    "GROUP" => (<>).to_string(),
+}
+
+DISTINCT: String = {
+    "DISTINCT" => (<>).to_string(),
+}
+
+BY: String = {
+    "BY" => (<>).to_string(),
+}
+
+OR: String = {
+    "OR" => (<>).to_string(),
+}
+
+AS: String = {
+    "AS" => (<>).to_string(),
+}
+
+// Data Literals
 INT: String = {
     r"[0-9]+" => (<>).to_string(), // returns number as string
 }
@@ -205,12 +297,4 @@ STRING: String = {
 NAME: String = {
     r"[A-Za-z][A-Za-z0-9_-]*" => (<>).to_string(), //returns string when it is a name
     r"[A-Za-z][A-Za-z0-9_-]*\.[A-Za-z][A-Za-z0-9_-]*" => (<>).to_string(), //returns string when it is a name
-}
-
-OR: String = {
-    "OR" => (<>).to_string(), //returns string OR
-}
-
-AND: String = {
-    "AND" => (<>).to_string(), //returns string AND
 }

@@ -51,6 +51,42 @@ impl AndList {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct FuncOperand {
+    pub code: usize,
+    pub value: String,
+}
+
+impl FuncOperand {
+    pub fn new(code: usize, value: String) -> FuncOperand {
+        FuncOperand { code, value }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct FuncOperator {
+    pub code: usize,
+    pub left_operator: Option<Box<FuncOperator>>,
+    pub left_operand: Option<Box<FuncOperand>>,
+    pub right: Option<Box<FuncOperator>>,
+}
+
+impl FuncOperator {
+    pub fn new(
+        code: usize,
+        left_operator: Option<Box<FuncOperator>>,
+        left_operand: Option<Box<FuncOperand>>,
+        right: Option<Box<FuncOperator>>,
+    ) -> FuncOperator {
+        FuncOperator {
+            code,
+            left_operator,
+            left_operand,
+            right,
+        }
+    }
+}
+
 // Global Values used by Comparison
 pub const LESS_THAN: usize = 1;
 pub const GREATER_THAN: usize = 2;
@@ -60,3 +96,8 @@ pub const DOUBLE: usize = 1;
 pub const INT: usize = 2;
 pub const STRING: usize = 3;
 pub const NAME: usize = 4;
+
+pub const ADD: usize = 1;
+pub const SUB: usize = 2;
+pub const MUL: usize = 3;
+pub const DIV: usize = 4;

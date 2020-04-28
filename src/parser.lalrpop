@@ -13,7 +13,7 @@ match {
     "OR",
     r"[0-9]+", // Int
     r"[0-9]+\.[0-9]*", // Float
-    r"[A-Za-z][A-Za-z0-9_-]*", // Name
+    r"[A-Za-z][\.A-Za-z0-9_-]*", // Name
     r"'[^\n]*'", // String
 
 
@@ -104,7 +104,7 @@ STRING: String = {
 }
 
 NAME: String = {
-    r"[A-Za-z][A-Za-z0-9_-]*" => (<>).to_string(), //returns string when it is a name
+    r"[A-Za-z][\.A-Za-z0-9_-]*" => (<>).to_string(), //returns string when it is a name
 
 }
 

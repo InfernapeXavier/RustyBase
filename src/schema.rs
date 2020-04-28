@@ -15,6 +15,11 @@ impl Attribute {
             my_type: DataType::INT,
         }
     }
+
+    // A constructor that can take values
+    pub fn init(name: String, my_type: DataType) -> Attribute {
+        Attribute { name, my_type }
+    }
 }
 
 pub struct Schema {
@@ -69,7 +74,7 @@ impl Schema {
         &self.my_atts
     }
 
-    // Builds the actual schema structure
+    // Builds the actual schema structure from a schema file
     pub fn build(mut self, file_name: &std::path::Path, rel_name: &str) -> Schema {
         let file_ref = File::open(file_name).expect("Unable to open Schema File"); // open file in read mode
         let reader = BufReader::new(file_ref);
@@ -136,5 +141,29 @@ impl Schema {
             }
         }
         self
+    }
+
+    pub fn build_from_atts(mut self, file_name: &str, num_atts: i64, atts: Vec<Attribute>) {
+        self.file_name = file_name.to_string();
+        self.num_atts = num_atts;
+        self.my_atts = Vec::new();
+
+        for x in atts {
+            match x.my_type {
+                DataType::INT => {
+                    let temp_att = Attribute::init(x.name, x.my_type);
+                    self.my_atts.push(temp_att);
+                }
+                DataType::DOUBLE => {
+                    let temp_att = Attribute::init(x.name, x.my_type);
+                    self.my_atts.push(temp_att);
+                }
+                DataType::STRING => {
+                    let temp_att = Attribute::init(x.name, x.my_type);
+                    self.my_atts.push(temp_att);
+                }
+                _ => panic!("Bad attribute type found {:#?}\n", x.my_type),
+            }
+        }
     }
 }

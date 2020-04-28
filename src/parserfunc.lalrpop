@@ -1,0 +1,112 @@
+use std::str::FromStr;
+use crate::parsedefs;
+use crate::parsedefs::{Operand, ComparisonOp, OrList, AndList, FuncOperand, FuncOperator};
+grammar;
+
+match {
+    "+",
+    "-",
+    "/",
+    "*",
+    "(",
+    ")",
+    "AND",
+    "OR",
+    r"[0-9]+", // Int
+    r"[0-9]+\.[0-9]*", // Float
+    r"[A-Za-z][\.A-Za-z0-9_-]*", // Name
+    r"'[^\n]*'", // String
+
+
+    // Skip whitespace and comments
+    r"\s*" => { },
+    r"//[^\n\r]*[\n\r]*" => { }, // `// comment`
+    r"/\*([^\*]*\*+[^\*/])*([^\*]*\*+|[^\*])*\*/" => { }, // `/* comment */`
+}
+
+// Returns the final ParseTree via ParseTreeParser
+pub CompoundExp: FuncOperator = {
+    <l:SimpleExp> <m:Op> <r:CompoundExp> => {
+        let code = match m {
+            "+" => parsedefs::ADD,
+            "-" => parsedefs::SUB,
+            "*" => parsedefs::MUL,
+            "/" => parsedefs::DIV,
+        }
+        let left_operator = FuncOperator::new(m, None, Some(Box::new(l)), None);
+        operator.left_operator = None;
+        operator.left_operand = Some(l);
+        operator.right = None;
+        FuncOperator::new(code, Some(Box::new(left_operator)), None, Some(Box::new(r)))
+    },
+
+    "(" <l:CompoundExp> ")" <m:Op > <r:CompoundExp> => {
+        let code = match m {
+            "+" => parsedefs::ADD,
+            "-" => parsedefs::SUB,
+            "*" => parsedefs::MUL,
+            "/" => parsedefs::DIV,
+        }
+        FuncOperator::new(code, Some(Box::new(l)), None, Some(Box::new(r)))
+    },
+
+    "(" CompoundExp ")" => <>,
+
+    SimpleExp => {
+        FuncOperator::new(0, None, Some(Box::new(<>)), None)
+    },
+
+    "-" CompoundExp => {
+        FuncOperator::new(parsedefs::SUB, Some(Box::new(<>)), None, None)
+    }
+
+
+};
+
+Op: String = {
+    "-" => (<>).to_string(),
+    "+" => (<>).to_string(),
+    "/" => (<>).to_string(),
+    "*" => (<>).to_string()
+};
+
+// Returns Operand built with the DataType and the input value
+SimpleExp: FuncOperand = {
+    INT => {
+        FuncOperand::new(parsedefs::INT, <>)
+    },
+
+    DOUBLE => {
+        FuncOperand::new(parsedefs::DOUBLE, <>)
+    },
+
+    STRING => {
+       FuncOperand::new(parsedefs::STRING, <>)
+    },
+
+    NAME => {
+        FuncOperand::new(parsedefs::NAME, <>)
+    }
+};
+
+INT: String = {
+    r"[0-9]+" => (<>).to_string(), // returns number as string
+}
+
+DOUBLE: String = {
+    r"[0-9]+\.[0-9]*" => (<>).to_string(), // returns number as string
+};
+
+STRING: String = {
+    r"'[^\n]*'" => {
+        let len = (<>).len();
+        let s = <>.to_string();
+        let slice = &s[1..(len-1)];
+        let final_slice = &slice.replace("\\", ""); // handles "'" in strings
+        final_slice.to_string()
+    }
+}
+
+NAME: String = {
+    r"[A-Za-z][\.A-Za-z0-9_-]*" => (<>).to_string(), //returns string when it is a name
+}

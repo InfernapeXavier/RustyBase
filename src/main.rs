@@ -316,20 +316,20 @@ fn cnf_test() {
 }
 
 // This prints out the parse tree that is generated from the extended parser that handles functional expressions
-#[test]
-fn extparser_test() {
-    // EG Input: 1+(2*3)
+// #[test]
+// fn extparser_test() {
+//     // EG Input: 1+(2*3)
 
-    print!("\n\nEnter in your Expression: ");
-    io::stdout().flush().unwrap();
-    let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Can't read your CNF");
-    // Parsing the CNF
-    let expression = parserfunc::CompoundExpParser::new().parse(&input).unwrap();
-    println!("This is the parsed expression:\n{:#?}", expression);
-}
+//     print!("\n\nEnter in your Expression: ");
+//     io::stdout().flush().unwrap();
+//     let mut input = String::new();
+//     io::stdin()
+//         .read_line(&mut input)
+//         .expect("Can't read your CNF");
+//     // Parsing the CNF
+//     let expression = parserfunc::CompoundExpParser::new().parse(&input).unwrap();
+//     println!("This is the parsed expression:\n{:#?}", expression);
+// }
 
 #[test]
 fn sql_test() {

@@ -22,15 +22,17 @@ mod parsedefs;
 mod record;
 mod schema;
 
-// Defining LALRPOP Parser to parse inputs
-lalrpop_mod!(pub parser);
-lalrpop_mod!(pub parserfunc);
-lalrpop_mod!(pub sqlparser);
-
+// Defining LALRPOP Parsers to parse inputs
+lalrpop_mod!(pub parser); // Parses a basic CNF
+lalrpop_mod!(pub parserfunc); // Parses Functional Expressions
+lalrpop_mod!(pub sqlparser); // Parses SQL
+                             // The parsers are mostly incremental
 fn main() {
     println!("\n\nExecuted Main.........");
 }
 
+// This test simulates the main function in P1
+// Takes in a simple CNF and returns the records that are satisfied by it
 #[test]
 fn main_test() {
     // EG Input: (l_orderkey > 27) AND (l_orderkey < 45)
@@ -89,9 +91,9 @@ fn main_test() {
     }
 }
 
+// This test creates a page with all records that match the CNF
 #[test]
 fn page_test() {
-    // This test creates a page with all records that match the CNF
     // EG Input: (l_orderkey > 27) AND (l_orderkey < 45)
     // EG Input: (l_orderkey = 33)
 
@@ -149,28 +151,29 @@ fn page_test() {
         }
     }
 
-    // print!("{:#?}", my_page);
+    println!("This is what the page looks like:\n{:#?}", my_page);
     let mut bin = Vec::new();
     my_page.to_binary(&mut bin);
-    // print!("{:#?}", bin);
+    println!("This is what to_binary does:\n{:#?}", bin);
     let mut test_page = file::Page::new();
     test_page.from_binary(bin);
-    // println!("{:#?}", test_page);
+    println!("Result of from_binary:\n{:#?}", test_page);
 
     // File test
     let mut test_file = file::File::new();
     let temp_page = Path::new("tempFile");
     test_file.add_page(&test_page, 7, temp_page, 0);
     let mut test_page2 = file::Page::new();
-    // println!("{:#?}", test_file);
+    println!("This is what a file looks like:\n{:#?}", test_file);
     test_file.get_page(&mut test_page2, 7, temp_page);
-    println!("{:#?}", test_page2);
+    println!("This page has been read from the file:\n{:#?}", test_page2);
+    // If you comment the following line you can see the actual file being created
     fs::remove_file(temp_page).expect("Unable to remove temp file");
 }
 
+// This test tests the methods of record
 #[test]
 fn record_test() {
-    // This test just checks the methods that a record has
     // EG Input: (l_orderkey > 27) AND (l_orderkey < 45)
     // EG Input: (l_orderkey = 33)
 
@@ -226,20 +229,27 @@ fn record_test() {
         }
     }
 
-    println!("\n\n{:#?}", temp.bits);
-    println!("{:#?}\n\n", literal.bits);
+    println!("\n\nThis is what a record looks like:\n{:#?}", temp.bits);
+    println!(
+        "This is what a literal record looks like:\n{:#?}\n\n",
+        literal.bits
+    );
     let project_list = vec![
         true, true, true, true, true, true, true, true, true, false, false, false, false, false,
         false, false,
     ];
     let mut test_record = record::Record::new(table_file);
     test_record.merge_records(temp, literal, project_list);
-    println!("{:#?}", test_record.bits);
+    // Merge Uses Project so this checks both methods at once
+    println!(
+        "This is what a merged record looks like:\n{:#?}",
+        test_record.bits
+    );
 }
 
+// This test prints out the Comparison structure that is generated from the CNF. It uses the first (basic) parser
 #[test]
 fn cnf_test() {
-    // This test just checks the methods that a record has
     // EG Input: (l_orderkey > 27) AND (l_orderkey < 45)
     // EG Input: (l_orderkey = 33)
 
@@ -274,9 +284,10 @@ fn cnf_test() {
         &lineitem,
         &mut literal,
     );
-    println!("The final CNF looks like this: {:#?}", my_comparison);
+    println!("The final CNF looks like this:\n{:#?}", my_comparison);
 }
 
+// This prints out the parse tree that is generated from the extended parser that handles functional expressions
 #[test]
 fn parser_test() {
     print!("\n\nEnter in your Expression: ");
@@ -287,19 +298,17 @@ fn parser_test() {
         .expect("Can't read your CNF");
     // Parsing the CNF
     let expression = parserfunc::CompoundExpParser::new().parse(&input).unwrap();
-    println!("{:#?}", expression);
+    println!("This is the parsed expression:\n{:#?}", expression);
 }
 
 #[test]
 fn sql_test() {
-    // print!("\n\nEnter in your Expression: ");
-    // io::stdout().flush().unwrap();
-    let input = String::from(
-        "SELECT SUM DISTINCT (a.b + b), d.g FROM a AS b WHERE ('foo' > this.that OR 2 = 3) AND (12 > 5) GROUP BY a.f, c.d, g.f",
-    );
-    // io::stdin()
-    //     .read_line(&mut input)
-    //     .expect("Can't read your CNF");
+    print!("\n\nEnter in your Expression: ");
+    io::stdout().flush().unwrap();
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Can't read your CNF");
     // Parsing the CNF
     let expression = sqlparser::SQLParser::new().parse(&input).unwrap();
     println!("{:#?}", expression);

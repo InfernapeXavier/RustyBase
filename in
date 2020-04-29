@@ -1,6 +1,6 @@
 (l_orderkey > 27) AND (l_orderkey < 45)
-(l_orderkey = 33)
-(l_orderkey = 33)
+(l_orderkey > 27) AND (l_orderkey < 45)
+(l_orderkey > 27) AND (l_orderkey < 45)
 1+(2*3)
 (l_orderkey > 27) AND (l_orderkey < 45)
 SELECT SUM DISTINCT (a.b + b), d.g FROM a AS b WHERE ('foo' > this.that OR 2 = 3) AND (12 > 5) GROUP BY a.f, c.d, g.f

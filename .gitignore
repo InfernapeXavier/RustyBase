@@ -22,3 +22,6 @@ src/*.pdb
 # Scratch Files
 src/scratch/
 src/scratch/
+
+# Tpch1GiG
+tpchgig/

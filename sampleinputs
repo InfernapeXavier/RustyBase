@@ -1,21 +1,19 @@
 In Order
 
-main_test
+cnf_test
 (l_orderkey > 27) AND (l_orderkey < 45)
 
 extparser_test Test
 1+(2*3)
+
+main_test
+(l_orderkey > 27) AND (l_orderkey < 45)
 
 page_test
 (l_orderkey > 27) AND (l_orderkey < 45)
 
 record_test
 (l_orderkey > 27) AND (l_orderkey < 45)
-
-cnf_test
-(l_orderkey > 27) AND (l_orderkey < 45)
-
-
 
 sql_test
 SELECT SUM DISTINCT (a.b + b), d.g FROM a AS b WHERE ('foo' > this.that OR 2 = 3) AND (12 > 5) GROUP BY a.f, c.d, g.f

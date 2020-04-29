@@ -137,7 +137,7 @@ impl NameList {
 }
 
 // This holds the final structure for the SQL parser
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Final {
     pub final_function: Option<FuncOperator>, // the aggregate function (NULL if no agg)
     pub tables: Option<TableList>,            // the list of tables and aliases in the query

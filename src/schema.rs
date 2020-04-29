@@ -43,7 +43,7 @@ impl Schema {
     }
 
     // Returns position of required attribute
-    pub fn find(&self, att_name: &String) -> i64 {
+    pub fn find(&self, att_name: &str) -> i64 {
         for x in 0..self.num_atts {
             let y = x as usize; // can't index using integer
             if *att_name == self.my_atts[y].name {
@@ -54,7 +54,7 @@ impl Schema {
     }
 
     // Returns type of given attribute
-    pub fn find_type(&self, att_name: &String) -> DataType {
+    pub fn find_type(&self, att_name: &str) -> DataType {
         for x in 0..self.num_atts {
             let y = x as usize; // can't index using integer
             if *att_name == self.my_atts[y].name {

@@ -85,7 +85,7 @@ impl Page {
 
     pub fn to_binary(&self, bits: &mut Vec<Vec<String>>) {
         // Copy number of records
-        &bits.push(vec![self.num_recs.to_string()]);
+        bits.push(vec![self.num_recs.to_string()]);
         // Copy each record one-by-one
         for x in &self.my_recs {
             bits.push(x.to_vec());
@@ -227,10 +227,8 @@ impl File {
 pub fn open(file_len: usize, file_des: &Path) -> Result<std::fs::File, std::io::Error> {
     if file_len == 0 {
         fs::File::create(file_des).expect("Could not create temp file for page");
-        let file = OpenOptions::new().append(true).open(file_des);
-        file
+        OpenOptions::new().append(true).open(file_des)
     } else {
-        let file = OpenOptions::new().append(true).read(true).open(file_des);
-        file
+        OpenOptions::new().append(true).read(true).open(file_des)
     }
 }

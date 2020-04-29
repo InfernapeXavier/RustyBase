@@ -58,7 +58,7 @@ impl Page {
                     .expect("Could not create temp file for page");
                 for x in &add_me.bits {
                     temp_file
-                        .write(format!("{}|", x).as_bytes())
+                        .write_all(format!("{}|", x).as_bytes())
                         .expect("Can't write to schema file");
                 }
             }
@@ -157,7 +157,7 @@ impl File {
                     Err(e) => panic!("Error in seeking to the required position!"),
                     Ok(o) => {
                         for x in 0..defs::PAGE_SIZE {
-                            file.write(format!("{}", temp).as_bytes())
+                            file.write_all(format!("{}", temp).as_bytes())
                                 .expect("Unable to write to temp file");
                         }
                     }
@@ -176,10 +176,10 @@ impl File {
             Ok(o) => {
                 for x in bits {
                     for y in x {
-                        file.write(format!("{}|", y).as_bytes())
+                        file.write_all(format!("{}|", y).as_bytes())
                             .expect("Could not Write to file!");
                     }
-                    file.write(b"\n").expect("Could not Write to file!");
+                    file.write_all(b"\n").expect("Could not Write to file!");
                 }
             }
         }

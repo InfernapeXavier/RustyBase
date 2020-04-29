@@ -49,7 +49,7 @@ fn main_test() {
     let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
 
     // Building the schema
-    let catalog = Path::new("src/tpch/catalog");
+    let catalog = Path::new("tpch/catalog");
     let mut lineitem = schema::Schema::new();
     lineitem = lineitem.build(catalog, "lineitem");
 
@@ -70,7 +70,7 @@ fn main_test() {
     );
 
     // Building the temp record
-    let table_file = Path::new("src/tpch/lineitem.tbl");
+    let table_file = Path::new("tpch/lineitem.tbl");
     let mut temp = record::Record::new(table_file);
 
     // Building the schema
@@ -108,7 +108,7 @@ fn page_test() {
     let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
 
     // Building the schema
-    let catalog = Path::new("src/tpch/catalog");
+    let catalog = Path::new("tpch/catalog");
     let mut lineitem = schema::Schema::new();
     lineitem = lineitem.build(catalog, "lineitem");
 
@@ -129,7 +129,7 @@ fn page_test() {
     );
 
     // Building the temp record
-    let table_file = Path::new("src/tpch/lineitem.tbl");
+    let table_file = Path::new("tpch/lineitem.tbl");
     let mut temp = record::Record::new(table_file);
 
     // Building the schema
@@ -188,7 +188,7 @@ fn record_test() {
     let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
 
     // Building the schema
-    let catalog = Path::new("src/tpch/catalog");
+    let catalog = Path::new("tpch/catalog");
     let mut lineitem = schema::Schema::new();
     lineitem = lineitem.build(catalog, "lineitem");
 
@@ -209,7 +209,7 @@ fn record_test() {
     );
 
     // Building the temp record
-    let table_file = Path::new("src/tpch/lineitem.tbl");
+    let table_file = Path::new("tpch/lineitem.tbl");
     let mut temp = record::Record::new(table_file);
 
     // Building the schema
@@ -265,7 +265,7 @@ fn cnf_test() {
     println!("The parsed expression is: {:#?}", expression);
 
     // Building the schema
-    let catalog = Path::new("src/tpch/catalog");
+    let catalog = Path::new("tpch/catalog");
     let mut lineitem = schema::Schema::new();
     lineitem = lineitem.build(catalog, "lineitem");
 
@@ -289,7 +289,9 @@ fn cnf_test() {
 
 // This prints out the parse tree that is generated from the extended parser that handles functional expressions
 #[test]
-fn parser_test() {
+fn extparser_test() {
+    // EG Input: 1+(2*3)
+
     print!("\n\nEnter in your Expression: ");
     io::stdout().flush().unwrap();
     let mut input = String::new();
@@ -303,6 +305,7 @@ fn parser_test() {
 
 #[test]
 fn sql_test() {
+    // EG Input: SELECT SUM DISTINCT (a.b + b), d.g FROM a AS b WHERE ('foo' > this.that OR 2 = 3) AND (12 > 5) GROUP BY a.f, c.d, g.f
     print!("\n\nEnter in your Expression: ");
     io::stdout().flush().unwrap();
     let mut input = String::new();

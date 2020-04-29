@@ -1,5 +1,5 @@
 [package]
-name = "database"
+name = "rustybase"
 version = "0.1.0"
 authors = ["Rohit Choudhari <https://www.github.com/InfernapeXavier>"]
 edition = "2018"

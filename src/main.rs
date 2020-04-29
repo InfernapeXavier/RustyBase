@@ -52,6 +52,7 @@ fn main_test() {
 
     // Create a time instance
     let instant = Instant::now();
+
     // Parsing the CNF
     let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
 
@@ -96,6 +97,7 @@ fn main_test() {
             // temp.print(&my_schema);
         }
     }
+
     println!("\n\nTime Taken: {:#?}", instant.elapsed());
 }
 
@@ -112,6 +114,10 @@ fn page_test() {
     io::stdin()
         .read_line(&mut input)
         .expect("Can't read your CNF");
+
+    // Create a time instance
+    let instant = Instant::now();
+
     // Parsing the CNF
     let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
 
@@ -177,6 +183,8 @@ fn page_test() {
     println!("This page has been read from the file:\n{:#?}", test_page2);
     // If you comment the following line you can see the actual file being created
     fs::remove_file(temp_page).expect("Unable to remove temp file");
+
+    println!("\n\nTime Taken: {:#?}", instant.elapsed());
 }
 
 // This test tests the methods of record
@@ -192,6 +200,10 @@ fn record_test() {
     io::stdin()
         .read_line(&mut input)
         .expect("Can't read your CNF");
+
+    // Create a time instance
+    let instant = Instant::now();
+
     // Parsing the CNF
     let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
 
@@ -253,6 +265,8 @@ fn record_test() {
         "This is what a merged record looks like:\n{:#?}",
         test_record.bits
     );
+
+    println!("\n\nTime Taken: {:#?}", instant.elapsed());
 }
 
 // This test prints out the Comparison structure that is generated from the CNF. It uses the first (basic) parser
@@ -268,6 +282,10 @@ fn cnf_test() {
     io::stdin()
         .read_line(&mut input)
         .expect("Can't read your CNF");
+
+    // Create a time instance
+    let instant = Instant::now();
+
     // Parsing the CNF
     let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
     println!("The parsed expression is: {:#?}", expression);
@@ -293,6 +311,8 @@ fn cnf_test() {
         &mut literal,
     );
     println!("The final CNF looks like this:\n{:#?}", my_comparison);
+
+    println!("\n\nTime Taken: {:#?}", instant.elapsed());
 }
 
 // This prints out the parse tree that is generated from the extended parser that handles functional expressions

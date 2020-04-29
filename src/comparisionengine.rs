@@ -55,8 +55,11 @@ pub fn compare_sort_same(left: &Record, right: &Record, order_us: &OrderMaker) -
     0
 }
 
-// Similar to the last function, except that this one works in the
-// case where the two records come from different input relations.
+// This version of Compare is for sorting. The OrderMaker struct encapsulates the specification for a sort order.
+// For example, say you are joining two tables on R.att1 = S.att2, and so you want to sort R using att1.
+// The OrderMaker struct specifies this sort ordering on att1.
+// Compare returns a negative number, 0, or a positive number if left is less than, equal to, or greater than right.
+// This particular version of Compare is used when both of the records come from the TWO DIFFERENT relations
 // It is used to do sorts for a sort-merge join
 
 pub fn compare_sort_different(

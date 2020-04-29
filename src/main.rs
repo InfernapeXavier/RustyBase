@@ -56,7 +56,7 @@ fn main_test() {
     let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
 
     // Building the schema
-    let catalog = Path::new("tpchgig/catalog");
+    let catalog = Path::new("tpch/catalog");
     let mut lineitem = schema::Schema::new();
     lineitem = lineitem.build(catalog, "lineitem");
 
@@ -77,7 +77,7 @@ fn main_test() {
     );
 
     // Building the temp record
-    let table_file = Path::new("tpchgig/lineitem.tbl");
+    let table_file = Path::new("tpch/lineitem.tbl");
     let mut temp = record::Record::new(table_file);
 
     // Building the schema
@@ -93,7 +93,7 @@ fn main_test() {
         }
 
         if comparisionengine::compare_unary(&temp, &literal, &my_comparison) {
-            temp.print(&my_schema);
+            // temp.print(&my_schema);
         }
     }
     println!("\n\nTime Taken: {:#?}", instant.elapsed());

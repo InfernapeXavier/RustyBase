@@ -7,6 +7,10 @@ use std::io::{BufRead, BufReader};
 use crate::defs::DataType;
 use crate::schema::Schema;
 
+// For Benchmarking
+use std::thread::sleep;
+use std::time::{Duration, Instant};
+
 #[derive(Debug)]
 pub struct Record {
     pub bits: Vec<String>,
@@ -69,6 +73,8 @@ impl Record {
     }
     // reads the next record and returns false when there's no more data
     pub fn suck_next_record(&mut self, my_schema: &Schema) -> bool {
+        // Create a time instance
+        // let instant = Instant::now();
         // reads the next record
         let newline = self.reader.next();
         let newline = match newline {
@@ -88,6 +94,7 @@ impl Record {
             for x in vec {
                 self.bits.push(x.to_string());
             }
+            // println!("\n\nTime Taken: {:#?}", instant.elapsed());
             true
         }
     }

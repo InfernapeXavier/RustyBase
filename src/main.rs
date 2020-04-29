@@ -13,6 +13,10 @@ use std::io;
 use std::io::prelude::*;
 use std::path::Path;
 
+// For Benchmarking
+use std::thread::sleep;
+use std::time::{Duration, Instant};
+
 // Declaring Modules
 mod comparisionengine;
 mod comparison;
@@ -45,11 +49,14 @@ fn main_test() {
     io::stdin()
         .read_line(&mut input)
         .expect("Can't read your CNF");
+
+    // Create a time instance
+    let instant = Instant::now();
     // Parsing the CNF
     let expression = parser::ParseTreeParser::new().parse(&input).unwrap();
 
     // Building the schema
-    let catalog = Path::new("tpch/catalog");
+    let catalog = Path::new("tpchgig/catalog");
     let mut lineitem = schema::Schema::new();
     lineitem = lineitem.build(catalog, "lineitem");
 
@@ -70,7 +77,7 @@ fn main_test() {
     );
 
     // Building the temp record
-    let table_file = Path::new("tpch/lineitem.tbl");
+    let table_file = Path::new("tpchgig/lineitem.tbl");
     let mut temp = record::Record::new(table_file);
 
     // Building the schema
@@ -89,6 +96,7 @@ fn main_test() {
             temp.print(&my_schema);
         }
     }
+    println!("\n\nTime Taken: {:#?}", instant.elapsed());
 }
 
 // This test creates a page with all records that match the CNF
